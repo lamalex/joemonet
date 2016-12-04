@@ -1,0 +1,28 @@
+<template name="newExpenseModal">
+  <div class="modal fade" id="new-expense-modal" tabindex="-1" role="dialog" aria-labelledby="add-expense-label">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="add-expense-label">Add an expense</h4>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="expenseName">Expense name:</label>
+              <input class="form-control" id="expenseName" placeholder="Your expense's name here">
+            </div>
+            <div class="form-group">
+              <label for="expenseAmount">Amount:</label>
+              <input class="form-control" type="number" id="expenseAmount" placeholder="Amount of expense">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Add Expense</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
