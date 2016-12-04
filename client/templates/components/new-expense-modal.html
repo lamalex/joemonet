@@ -16,6 +16,20 @@
               <label for="expenseAmount">Amount:</label>
               <input class="form-control" type="number" id="expenseAmount" placeholder="Amount of expense">
             </div>
+            <div class="form-group">
+              <label for="expenseReoccurance">Reoccurs:</label>
+              <div id="expenseReoccurance" class="btn-group" data-toggle="buttons">
+                <label class="btn btn-success">
+                  <input type="radio" id="reoccursYearly" checked>Yearly
+                </label>
+                <label class="btn btn-success active">
+                  <input type="radio" id="reoccursMonthly" checked>Monthly
+                </label>
+                <label class="btn btn-success">
+                  <input type="radio" id="reoccursWeekly" checked>Weekly
+                </label>
+              </div>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
