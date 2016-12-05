@@ -18,6 +18,10 @@ function destroyPopover(i) {
 }
 
 Template.calendar.onRendered(() => {
+  $('#new-expense-modal').on('show.bs.modal', function(event) {
+    Session.set('activeDate', $(event.relatedTarget).data('date'))
+  });
+
   $('#calendar').fullCalendar({
     header: {
       right: 'today basicWeek,month prev,next'
@@ -43,12 +47,13 @@ Template.calendar.onRendered(() => {
       // we want to shift from 0 -> 1 and 1 -> 0 each time so we can destroy the old popover
       old = index;
       index = boolToIndex(!index);
-
+      // FIXME need moment.js docs to get this right.
+      strDate = date._d.getFullYear() + '-' + (date._d.getMonth() + 1) + '-0' + (date._d.getDate() + 1);
       // If i could get this to work with the popover defined in the DOM I would. Any tips?
       popovers[index] = $(this).popover({
         container: 'body',
         html: true,
-        content: '<a href="#" data-toggle="modal" data-target="#new-expense-modal">Add an expense</a> | <a href="#">Add income</a>',
+        content: '<a href="#" data-toggle="modal" data-target="#new-expense-modal" data-date="'+strDate+'">Add an expense</a> | <a href="#">Add income</a>',
         placement: 'top',
         trigger: 'click'
 

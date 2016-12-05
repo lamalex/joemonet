@@ -1,13 +1,13 @@
 <template name="newExpenseModal">
   <div class="modal fade" id="new-expense-modal" tabindex="-1" role="dialog" aria-labelledby="add-expense-label">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="add-expense-label">Add an expense</h4>
-        </div>
-        <div class="modal-body">
-          <form>
+      <form>
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="add-expense-label">Add an expense</h4>
+          </div>
+          <div class="modal-body">
             <div class="form-group">
               <label for="expenseName">Expense name:</label>
               <input class="form-control" id="expenseName" placeholder="Your expense's name here">
@@ -18,25 +18,42 @@
             </div>
             <div class="form-group">
               <label for="expenseReoccurance">Reoccurs:</label>
-              <div id="expenseReoccurance" class="btn-group" data-toggle="buttons">
-                <label class="btn btn-success">
-                  <input type="radio" id="reoccursYearly" checked>Yearly
-                </label>
-                <label class="btn btn-success active">
-                  <input type="radio" id="reoccursMonthly" checked>Monthly
-                </label>
-                <label class="btn btn-success">
-                  <input type="radio" id="reoccursWeekly" checked>Weekly
-                </label>
+              <div class="center-block">
+                <ul class="nav nav-pills" role="tablist">
+                  <li role="presentation"><a href="#yearly" aria-controls="yearly" role="tab" data-toggle="pill">Yearly</a></li>
+                  <li role="presentation" class="active"><a href="#monthly" aria-controls="monthly" role="tab" data-toggle="pill">Monthly</a></li>
+                  <li role="presentation"><a href="#weekly" aria-controls="weekly" role="tab" data-toggle="pill">Weekly</a></li>
+                </ul>
+
+                <div class="center-block tab-content">
+                  <div role="tabpanel" class="tab-pane" id="yearly">
+                    <p class="text-center">Bill occurs a year on the [input].</p>
+                  </div>
+                  <div role="tabpanel" class="tab-pane active" id="monthly">
+                    <p class="text-center">
+                      Bill occurs
+                      <select>
+                        <option>once</option>
+                        <option>twice</option>
+                        <option>3x</option>
+                        <option>...</option>
+                      </select>
+                      a month on [input].
+                    </p>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="weekly">
+                    <p class="text-center">checkboxes for each day</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <input type="submit" class="btn btn-primary" value="Add Expense"/>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Add Expense</button>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
