@@ -16,21 +16,20 @@
               <label for="expenseAmount">Amount:</label>
               <input class="form-control" type="number" id="expenseAmount" placeholder="Amount of expense">
             </div>
-            <div class="form-group">
+            <div id="reoccuranceTabs" class="form-group">
               <label for="expenseReoccurance">Reoccurs:</label>
-              <div class="center-block">
+              <div>
                 <ul class="nav nav-pills" role="tablist">
                   <li role="presentation"><a href="#yearly" aria-controls="yearly" role="tab" data-toggle="pill">Yearly</a></li>
                   <li role="presentation" class="active"><a href="#monthly" aria-controls="monthly" role="tab" data-toggle="pill">Monthly</a></li>
                   <li role="presentation"><a href="#weekly" aria-controls="weekly" role="tab" data-toggle="pill">Weekly</a></li>
                 </ul>
-
-                <div class="center-block tab-content">
+                <div class="tab-content">
                   <div role="tabpanel" class="tab-pane" id="yearly">
-                    <p class="text-center">Bill occurs a year on the [input].</p>
+                    <p>Bill occurs a year on the [input].</p>
                   </div>
                   <div role="tabpanel" class="tab-pane active" id="monthly">
-                    <p class="text-center">
+                    <p>
                       Bill occurs
                       <select>
                         <option>once</option>
@@ -42,7 +41,7 @@
                     </p>
                   </div>
                   <div role="tabpanel" class="tab-pane" id="weekly">
-                    <p class="text-center">checkboxes for each day</p>
+                    <p>checkboxes for each day</p>
                   </div>
                 </div>
               </div>

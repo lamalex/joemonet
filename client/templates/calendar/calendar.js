@@ -18,8 +18,13 @@ function destroyPopover(i) {
 }
 
 Template.calendar.onRendered(() => {
-  $('#new-expense-modal').on('show.bs.modal', function(event) {
-    Session.set('activeDate', $(event.relatedTarget).data('date'))
+  $('#new-expense-modal').on('show.bs.modal', function(e) {
+    Session.set('activeDate', $(e.relatedTarget).data('date'))
+  })
+  .on('hide.bs.modal', function(e) {
+    $('#expenseName').val("");
+    $('#expenseAmount').val("");
+    $('#reoccuranceTabs a[href=#monthly]').tab('show');
   });
 
   $('#calendar').fullCalendar({
