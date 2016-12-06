@@ -23,25 +23,22 @@
                   <li role="presentation"><a href="#yearly" aria-controls="yearly" role="tab" data-toggle="pill">Yearly</a></li>
                   <li role="presentation" class="active"><a href="#monthly" aria-controls="monthly" role="tab" data-toggle="pill">Monthly</a></li>
                   <li role="presentation"><a href="#weekly" aria-controls="weekly" role="tab" data-toggle="pill">Weekly</a></li>
+                  <li role="presentation"><a href="#never" aria-controls="never" role="tab" data-toggle="pill">Never</a></li>
                 </ul>
                 <div class="tab-content">
                   <div role="tabpanel" class="tab-pane" id="yearly">
-                    <p>Bill occurs a year on the [input].</p>
+                    Bill reoccurs yearly on the {{reoccursYearDate}}.
                   </div>
                   <div role="tabpanel" class="tab-pane active" id="monthly">
                     <p>
-                      Bill occurs
-                      <select>
-                        <option>once</option>
-                        <option>twice</option>
-                        <option>3x</option>
-                        <option>...</option>
-                      </select>
-                      a month on [input].
+                      Bill reoccurs monthly on the {{reoccursMonthDate}}.
                     </p>
                   </div>
                   <div role="tabpanel" class="tab-pane" id="weekly">
-                    <p>checkboxes for each day</p>
+                    Bill reoccurs weekly on {{reoccursWeekDate}}.
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="never">
+                    Bill does not reoccur.
                   </div>
                 </div>
               </div>

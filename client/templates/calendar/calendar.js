@@ -1,7 +1,23 @@
-import { Template } from 'meteor/templating';
+var ExpenseMultiplier = function ExpenseMultiplier(expense, start, end) {
+  var self = this;
+  self.expense = expense;
+  self.start = start;
+  self.end = end;
+}
 
-import './calendar.html';
+ExpenseMultiplier.prototype.multiply = function() {
+  if (expense.reoccurance.freq == "yearly") {
+    // get start year of expense
+  } else if (expense.reoccurance.freq == "monthly") {
 
+  } else if (expense.reoccurance.freq == "weekly") {
+
+  } else {
+    return expense;
+  }
+}
+
+var old = 0;
 var index = 0;
 var popovers = new Array(2);
 
@@ -18,10 +34,7 @@ function destroyPopover(i) {
 }
 
 Template.calendar.onRendered(() => {
-  $('#new-expense-modal').on('show.bs.modal', function(e) {
-    Session.set('activeDate', $(e.relatedTarget).data('date'))
-  })
-  .on('hide.bs.modal', function(e) {
+  $('#new-expense-modal').on('hide.bs.modal', function(e) {
     $('#expenseName').val("");
     $('#expenseAmount').val("");
     $('#reoccuranceTabs a[href=#monthly]').tab('show');
@@ -33,7 +46,8 @@ Template.calendar.onRendered(() => {
     },
     events: function(start, end, timezone, callback) {
       let data = Expenses.find().fetch().map((expense) => {
-        return expense;
+        em = new ExpenseMultiplier(expense, undefined);
+        return {'start': expense.start, 'title': expense.title};
       });
 
       callback(data);
@@ -52,7 +66,14 @@ Template.calendar.onRendered(() => {
       // we want to shift from 0 -> 1 and 1 -> 0 each time so we can destroy the old popover
       old = index;
       index = boolToIndex(!index);
-      Session.set('activeDate', date.toString());
+
+      // append the day (ie. sun, mon in the form of 0, 1, etc) to the array.
+      dateArray = date.toArray()
+      dateArray.push(date.day())
+      // unfuck the MONTH offset.
+      dateArray[1] = dateArray[1] + 1;
+      Session.set('activeDate', dateArray);
+
       // If i could get this to work with the popover defined in the DOM I would. Any tips?
       popovers[index] = $(this).popover({
         container: 'body',
