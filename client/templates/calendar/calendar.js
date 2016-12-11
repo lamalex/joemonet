@@ -104,7 +104,6 @@ Template.calendar.onRendered(() => {
 
   Tracker.autorun( () => {
     // When new expenses get added to the DB make sure we refresh the calendar
-    Expenses.find().fetch();
     $('#calendar').fullCalendar('refetchEvents');
   });
 });
