@@ -28,7 +28,7 @@ Template.calendar.onRendered(() => {
     },
     events: function(start, end, timezone, callback) {
       bankaccount = 3500;
-      let data = Expenses.find().fetch().map((expense) => {
+      let data = Expenses.find({}, {sort: {'start': 1} }).fetch().map((expense) => {
         bankaccount = (bankaccount - expense.amount).toFixed(2);
         return [
           {
@@ -103,18 +103,26 @@ Template.calendar.onRendered(() => {
       amount = element.find('.fc-time');
       amount.text('$' + expense.amount);
 
+      wrapper = $('<span class="jm-expense-wrapper"></span>');
+      edit = $('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>');
+      edit.click(function() {
+        // TODO
+      });
       trash = $('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
       trash.click(function() {
         Expenses.remove({'_id': expense.id});
       })
-      trash.appendTo(amount).hide()
+
+      edit.appendTo(wrapper);
+      trash.appendTo(wrapper);
+      wrapper.appendTo(amount).hide()
     },
     eventClick: function(expense, jsevent, view) {
       if (expense.type === "balance") {
         return;
       }
 
-      $(jsevent.currentTarget).find('.glyphicon').toggle('fast');
+      $(jsevent.currentTarget).find('.jm-expense-wrapper').toggle('fast');
     }
   });
 
