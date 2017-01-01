@@ -26,9 +26,10 @@ Template.calendar.onRendered(() => {
       right: 'today basicWeek,month prev,next'
     },
     events: function(start, end, timezone, callback) {
-      bankaccount = 3500;
+      bankaccount = 3485.97;
       let data = Expenses.find({}, {sort: {'start': 1} }).fetch().map((expense) => {
         bankaccount = (bankaccount - expense.amount).toFixed(2);
+        balance = $('#calendar').fullCalendar('clientEvents', expense.start);
         return [
           {
             'id': expense._id,
@@ -39,6 +40,8 @@ Template.calendar.onRendered(() => {
             'textColor': "#B90000"
           },
           {
+            'id': expense.start,
+            'from': 'expense',
             'start': expense.start,
             'title': 'Balance',
             'amount': bankaccount,
@@ -48,8 +51,17 @@ Template.calendar.onRendered(() => {
         ]
       });
 
-      //flatten the array!
-      data = [].concat.apply([], data);
+      // Fixes the double balance bug by walking the list of bills/balances
+      // backwards and saying "have i already seen this balance event?"
+      // if I have, throw it away. By going backwards we should always have
+      // the most subtracted or most added balance for a given duplicate.
+      // ... I think. It's working so far.
+      data = _.reduceRight(data, function(a, b) {
+        if (_.findWhere(a, {type: 'balance', id: b[1].id})) {
+          return a.concat(b[0]);
+        }
+        return a.concat(b);
+      }, []);
       callback(data);
     },
     eventOrder: "type",
