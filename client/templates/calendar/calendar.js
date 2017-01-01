@@ -35,13 +35,15 @@ Template.calendar.onRendered(() => {
             'start': expense.start,
             'title': expense.title,
             'amount': expense.amount,
-            'type': expense.type || "expense"
+            'type': expense.type || "expense",
+            'textColor': "#B90000"
           },
           {
             'start': expense.start,
             'title': 'Balance',
             'amount': bankaccount,
-            'type': 'balance'
+            'type': 'balance',
+            'textColor': '#BDBDBD'
           }
         ]
       });
@@ -94,16 +96,11 @@ Template.calendar.onRendered(() => {
         });
       });
     },
+    eventBackgroundColor: "#FFF",
+    eventBorderColor: "#FFF",
     eventRender: function(expense, element, view) {
       amount = element.find('.fc-time');
       amount.text('$' + expense.amount);
-      element.addClass('jm');
-
-      if (expense.type == "expense") {
-        element.addClass('jm-expense');
-      } else if (expense.type == "balance") {
-        element.addClass('jm-balance');
-      }
     }
   });
 

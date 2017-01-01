@@ -11,18 +11,3 @@ body {
   font-weight: normal;
   float: right;
 }
-
-.jm {
-  pointer-events: none;
-  background-color: #FFF;
-  border-color: #FFF;
-  font-weight: normal;
-}
-
-.jm-expense {
-  color: #B90000;
-}
-
-.jm-balance {
-  color: #BDBDBD;
-}
