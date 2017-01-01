@@ -1,22 +1,4 @@
-var ExpenseMultiplier = function ExpenseMultiplier(expense, start, end) {
-  var self = this;
-  self.expense = expense;
-  self.start = start;
-  self.end = end;
-}
-
-ExpenseMultiplier.prototype.multiply = function() {
-  if (expense.reoccurance.freq == "yearly") {
-    // get start year of expense
-  } else if (expense.reoccurance.freq == "monthly") {
-
-  } else if (expense.reoccurance.freq == "weekly") {
-
-  } else {
-    return expense;
-  }
-}
-
+var i = 0;
 var old = 0;
 var index = 0;
 var popovers = new Array(2);
@@ -45,19 +27,35 @@ Template.calendar.onRendered(() => {
       right: 'today basicWeek,month prev,next'
     },
     events: function(start, end, timezone, callback) {
+      bankaccount = 3500;
       let data = Expenses.find().fetch().map((expense) => {
-        em = new ExpenseMultiplier(expense, undefined);
-        return {'start': expense.start, 'title': expense.title};
+        bankaccount =(bankaccount - expense.amount).toFixed(2);
+        return [
+          {
+            'start': expense.start,
+            'title': expense.title,
+            'amount': expense.amount,
+            'type': expense.type || "expense"
+          },
+          {
+            'start': expense.start,
+            'title': 'Balance',
+            'amount': bankaccount,
+            'type': 'balance'
+          }
+        ]
       });
 
+      //flatten the array!
+      data = [].concat.apply([], data);
       callback(data);
     },
+    eventOrder: "type",
     // WORKAROUND: when we switch views destroy all popovers, otherwise they linger
     viewDestroy: function() {
       if (popovers[old] != null) {
         destroyPopover(old);
       }
-
       if (popovers[index] != null) {
         destroyPopover(index);
       }
@@ -68,11 +66,7 @@ Template.calendar.onRendered(() => {
       index = boolToIndex(!index);
 
       // append the day (ie. sun, mon in the form of 0, 1, etc) to the array.
-      dateArray = date.toArray()
-      dateArray.push(date.day())
-      // unfuck the MONTH offset.
-      dateArray[1] = dateArray[1] + 1;
-      Session.set('activeDate', dateArray);
+      Session.set('activeDate', date.valueOf());
 
       // If i could get this to work with the popover defined in the DOM I would. Any tips?
       popovers[index] = $(this).popover({
@@ -99,6 +93,17 @@ Template.calendar.onRendered(() => {
           }
         });
       });
+    },
+    eventRender: function(expense, element, view) {
+      amount = element.find('.fc-time');
+      amount.text('$' + expense.amount);
+      element.addClass('jm');
+
+      if (expense.type == "expense") {
+        element.addClass('jm-expense');
+      } else if (expense.type == "balance") {
+        element.addClass('jm-balance');
+      }
     }
   });
 

@@ -25,3 +25,4 @@ session
 iron:router
 sacha:spin
 accounts-password
+momentjs:moment
