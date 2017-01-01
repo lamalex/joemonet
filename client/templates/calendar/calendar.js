@@ -1,4 +1,3 @@
-var i = 0;
 var old = 0;
 var index = 0;
 var popovers = new Array(2);
@@ -103,7 +102,7 @@ Template.calendar.onRendered(() => {
       amount = element.find('.fc-time');
       amount.text('$' + expense.amount);
 
-      wrapper = $('<span class="jm-expense-wrapper"></span>');
+      wrapper = $('<span class="jm-edit-wrapper"></span>');
       edit = $('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>');
       edit.click(function() {
         // TODO
@@ -121,8 +120,7 @@ Template.calendar.onRendered(() => {
       if (expense.type === "balance") {
         return;
       }
-
-      $(jsevent.currentTarget).find('.jm-expense-wrapper').toggle('fast');
+      $(jsevent.currentTarget).find('.jm-edit-wrapper').toggle('fast');
     }
   });
 
