@@ -29,9 +29,10 @@ Template.calendar.onRendered(() => {
     events: function(start, end, timezone, callback) {
       bankaccount = 3500;
       let data = Expenses.find().fetch().map((expense) => {
-        bankaccount =(bankaccount - expense.amount).toFixed(2);
+        bankaccount = (bankaccount - expense.amount).toFixed(2);
         return [
           {
+            'id': expense._id,
             'start': expense.start,
             'title': expense.title,
             'amount': expense.amount,
@@ -101,6 +102,19 @@ Template.calendar.onRendered(() => {
     eventRender: function(expense, element, view) {
       amount = element.find('.fc-time');
       amount.text('$' + expense.amount);
+
+      trash = $('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
+      trash.click(function() {
+        Expenses.remove({'_id': expense.id});
+      })
+      trash.appendTo(amount).hide()
+    },
+    eventClick: function(expense, jsevent, view) {
+      if (expense.type === "balance") {
+        return;
+      }
+
+      $(jsevent.currentTarget).find('.glyphicon').toggle('fast');
     }
   });
 

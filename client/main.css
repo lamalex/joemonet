@@ -11,3 +11,7 @@ body {
   font-weight: normal;
   float: right;
 }
+
+.hidden {
+  display: none;
+}
