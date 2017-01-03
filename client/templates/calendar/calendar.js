@@ -41,7 +41,6 @@ Template.calendar.onRendered(() => {
           },
           {
             'id': expense.start,
-            'from': 'expense',
             'start': expense.start,
             'title': 'Balance',
             'amount': bankaccount,
@@ -108,8 +107,7 @@ Template.calendar.onRendered(() => {
         });
       });
     },
-    eventBackgroundColor: "#FFF",
-    eventBorderColor: "#FFF",
+    eventColor: "transparent",
     eventRender: function(expense, element, view) {
       amount = element.find('.fc-time');
       amount.text('$' + expense.amount);
