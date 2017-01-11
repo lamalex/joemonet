@@ -29,3 +29,6 @@ momentjs:moment
 underscore
 stylus
 ian:accounts-ui-bootstrap-3
+iain:accounting
+aldeed:simple-schema
+aldeed:collection2

@@ -5,18 +5,18 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="add-expense-label">Add an expense</h4>
+            <h4 class="modal-title" id="add-expense-label">Add an Expense</h4>
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label for="expenseName">Expense name:</label>
+              <label for="expenseName">Name:</label>
               <input class="form-control" id="expenseName" placeholder="Your expense's name here">
             </div>
             <div class="form-group">
               <label for="expenseAmount">Amount:</label>
               <input class="form-control" type="number" id="expenseAmount" placeholder="Amount of expense">
             </div>
-            <div id="reoccuranceTabs" class="form-group">
+            <!--<div id="reoccuranceTabs" class="form-group">
               <label for="expenseReoccurance">Reoccurs:</label>
               <div>
                 <ul class="nav nav-pills" role="tablist">
@@ -42,11 +42,11 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div>-->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <input type="submit" class="btn btn-primary" value="Add Expense"/>
+            <input id="expenseSubmit" type="submit" class="btn btn-primary" value="Add Expense"/>
           </div>
         </div>
       </form>

@@ -7,18 +7,37 @@ function boolToIndex(bool) {
   return Number(bool);
 }
 
+function isPast(date) {
+  var today = moment().format();
+  return moment(today).isAfter(date);
+}
+
 //duplicated code broken out into a function
 function destroyPopover(i) {
-  popovers[i].popover('destroy');
-  popovers[i] = null;
-  $(window).unbind();
+  if (popovers[i] !== null) {
+    popovers[i].popover('destroy');
+    popovers[i] = null;
+    $(window).unbind();
+  }
 }
 
 Template.calendar.onRendered(() => {
-  $('#new-expense-modal').on('hide.bs.modal', function(e) {
+  $('#new-expense-modal')
+  .on('hide.bs.modal', function(e) {
     $('#expenseName').val("");
     $('#expenseAmount').val("");
     $('#reoccuranceTabs a[href=#monthly]').tab('show');
+  })
+  .on('show.bs.modal', function(e) {
+    var link = $(e.relatedTarget);``
+    var type = link.data('monettype');
+    var modal = $(this);
+
+    modal.find('#add-expense-label').text('Add an ' + type);
+    modal.find('#expenseName').attr('placeholder', 'Your ' + type + '\'s name.');
+    modal.find('#expenseAmount').attr('placeholder', 'Your ' + type + '\'s amount.');
+    modal.find('#expenseSubmit').val("Add " + type);
+    Session.set('monettype', type);
   });
 
   $('#calendar').fullCalendar({
@@ -26,18 +45,33 @@ Template.calendar.onRendered(() => {
       right: 'today basicWeek,month prev,next'
     },
     events: function(start, end, timezone, callback) {
-      bankaccount = 3485.97;
-      let data = Expenses.find({}, {sort: {'start': 1} }).fetch().map((expense) => {
-        bankaccount = (bankaccount - expense.amount).toFixed(2);
-        balance = $('#calendar').fullCalendar('clientEvents', expense.start);
+      bankaccount = 7817.60;
+      let data = Expenses.find({
+        $or: [
+          { $and: [
+            { start: { $gte: moment().startOf('day').valueOf() }},
+            { paid: false }
+          ]},
+          { paid: false }
+        ]
+      }, {sort: {'start': 1} }).fetch().map((expense) => {
+
+        if (expense.type === 'expense') {
+          bankaccount = bankaccount - expense.amount;
+        } else if (expense.type === 'income') {
+          // for some reason casting is necessary here? i have no idea why
+          bankaccount = bankaccount + expense.amount;
+        }
+
         return [
           {
             'id': expense._id,
             'start': expense.start,
             'title': expense.title,
             'amount': expense.amount,
-            'type': expense.type || "expense",
-            'textColor': "#B90000"
+            'type': expense.type,
+            'textColor': (expense.type === 'expense') ? '#B90000' : '#5CB85C',
+            'editable': !isPast(expense.start)
           },
           {
             'id': expense.start,
@@ -79,17 +113,20 @@ Template.calendar.onRendered(() => {
       index = boolToIndex(!index);
 
       // append the day (ie. sun, mon in the form of 0, 1, etc) to the array.
-      Session.set('activeDate', date.valueOf());
+      Session.set('activeMoment', JSON.stringify(date));
 
       // If i could get this to work with the popover defined in the DOM I would. Any tips?
       popovers[index] = $(this).popover({
         container: 'body',
         html: true,
-        content: '<a href="#" data-toggle="modal" data-target="#new-expense-modal">Add an expense</a> | <a href="#">Add income</a>',
+        content: `
+          <a href="#" data-toggle="modal" data-target="#new-expense-modal" data-monettype="expense">Add an expense</a> |
+          <a href="#" data-toggle="modal" data-target="#new-expense-modal" data-monettype="income">Add income</a>
+        `,
         placement: 'top',
         trigger: 'click'
 
-      }).on('shown.bs.popover', () => {
+      }).on('shown.bs.popover', function(event) {
         /* This is a massive and stupid work around, but basically after each click
          * we evaluate if we have a popover showing and destroy it.
          * [old] != null will work if we're clicking in calendar, and the else
@@ -110,19 +147,28 @@ Template.calendar.onRendered(() => {
     eventColor: "transparent",
     eventRender: function(expense, element, view) {
       amount = element.find('.fc-time');
-      amount.text('$' + expense.amount);
+      amount.text(accounting.formatMoney(expense.amount));
 
       wrapper = $('<span class="jm-edit-wrapper"></span>');
+      markPaid = $('<span class="glyphicon glyphicon-send" aria-hidden="true"></span>')
+      markPaid.click(function() {
+        Expenses.update({'_id': expense.id}, {$set: {paid: true}});
+      });
+
       edit = $('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>');
       edit.click(function() {
-        // TODO
+        Session.set('expenseModalData', {type: 'edit', expense: expense.id});
+        $('#new-expense-modal').modal('show');
       });
+
       trash = $('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
       trash.click(function() {
         Expenses.remove({'_id': expense.id});
       })
 
-      edit.appendTo(wrapper);
+      markPaid.appendTo(wrapper);
+      if (!isPast(expense.start))
+        edit.appendTo(wrapper);
       trash.appendTo(wrapper);
       wrapper.appendTo(amount).hide()
     },
@@ -130,6 +176,8 @@ Template.calendar.onRendered(() => {
       if (expense.type === "balance") {
         return;
       }
+
+      // slide edit/delete buttons into view
       $(jsevent.currentTarget).find('.jm-edit-wrapper').toggle('fast');
     }
   });
