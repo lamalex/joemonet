@@ -8,7 +8,7 @@ function boolToIndex(bool) {
 }
 
 function isPast(date) {
-  var today = moment().format();
+  var today = moment().utc().startOf('day').format();
   return moment(today).isAfter(date);
 }
 
@@ -163,6 +163,10 @@ Template.calendar.onRendered(() => {
       $(jsevent.currentTarget).find('.jm-edit-wrapper').toggle('fast');
     },
     eventDrop: function(expense, delta, revertFunc) {
+      if (isPast(expense.start)) {
+        revertFunc();
+        return;
+      }
       Expenses.update({'_id': expense.id}, {$set: {'start': expense.start.startOf('day').valueOf() }});
     }
   });
