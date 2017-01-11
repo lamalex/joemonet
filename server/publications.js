@@ -1,3 +1,3 @@
-Meteor.publish('expenses', () => {
-  return Expenses.find({});
+Meteor.publish('expenses', function() {
+  return Expenses.find({'userId': this.userId});
 });
