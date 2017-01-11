@@ -22,30 +22,12 @@ function destroyPopover(i) {
 }
 
 Template.calendar.onRendered(() => {
-  $('#new-expense-modal')
-  .on('hide.bs.modal', function(e) {
-    $('#expenseName').val("");
-    $('#expenseAmount').val("");
-    $('#reoccuranceTabs a[href=#monthly]').tab('show');
-  })
-  .on('show.bs.modal', function(e) {
-    var link = $(e.relatedTarget);``
-    var type = link.data('monettype');
-    var modal = $(this);
-
-    modal.find('#add-expense-label').text('Add an ' + type);
-    modal.find('#expenseName').attr('placeholder', 'Your ' + type + '\'s name.');
-    modal.find('#expenseAmount').attr('placeholder', 'Your ' + type + '\'s amount.');
-    modal.find('#expenseSubmit').val("Add " + type);
-    Session.set('monettype', type);
-  });
-
   $('#calendar').fullCalendar({
     header: {
       right: 'today basicWeek,month prev,next'
     },
     events: function(start, end, timezone, callback) {
-      bankaccount = 7817.60;
+      bankaccount = 5786.34;
       let data = Expenses.find({
         $or: [
           { $and: [
@@ -179,6 +161,9 @@ Template.calendar.onRendered(() => {
 
       // slide edit/delete buttons into view
       $(jsevent.currentTarget).find('.jm-edit-wrapper').toggle('fast');
+    },
+    eventDrop: function(expense, delta, revertFunc) {
+      Expenses.update({'_id': expense.id}, {$set: {'start': expense.start.startOf('day').valueOf() }});
     }
   });
 
