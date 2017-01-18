@@ -38,27 +38,32 @@ Template.newExpenseModal.events({
   'submit form': function(e) {
     e.preventDefault();
     var modalData = Session.get('expenseModalData');
-    var date = JSON.parse(Session.get('activeMoment'));
-    date = moment(date).startOf('day').valueOf();
+    var date = Session.get('activeMoment');
+    date = moment(date).utc().startOf('day').valueOf();
 
     var expense = {
       title: $(e.target).find('#expenseName').val(),
       type: Session.get('monettype'),
       amount: Number($(e.target).find('#expenseAmount').val()),
-      // FIXME -- this jacks up on edit. we dont want to change the date!
+      paid: false,
       start: date,
-      paid: false
       /*reoccurance: {
         'freq': $(e.target).find('.tab-content .active')[0].id,
         'first': date
       }*/
     }
 
-
     if (modalData && modalData.type === "edit") {
-      Expenses.update({'_id': modalData.expense}, {$set: expense});
+      expense.id = modalData.expense;
+      Meteor.call('editExpense', expense, function(error) {
+        if (error)
+          console.log('editExpense error: ' + error);
+      });
     } else {
-      Expenses.insert(expense);
+      Meteor.call('addExpense', expense, function(error) {
+        if (error)
+          console.log('addExpense error: ' + error);
+      });
     }
     $('#new-expense-modal').modal('hide');
   }

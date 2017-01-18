@@ -8,7 +8,7 @@ function boolToIndex(bool) {
 }
 
 function isPast(date) {
-  var today = moment().utc().startOf('day').format();
+  var today = moment().utc().startOf('day').valueOf();
   return moment(today).isAfter(date);
 }
 
@@ -27,11 +27,11 @@ Template.calendar.onRendered(() => {
       right: 'today basicWeek,month prev,next'
     },
     events: function(start, end, timezone, callback) {
-      bankaccount = 5786.34;
+      bankaccount = 6721.80;
       let data = Expenses.find({
         $or: [
           { $and: [
-            { start: { $gte: moment().startOf('day').valueOf() }},
+            { start: { $gte: moment().utc().startOf('day').valueOf() }},
             { paid: false }
           ]},
           { paid: false }
@@ -44,7 +44,6 @@ Template.calendar.onRendered(() => {
           // for some reason casting is necessary here? i have no idea why
           bankaccount = bankaccount + expense.amount;
         }
-
         return [
           {
             'id': expense._id,
@@ -93,9 +92,7 @@ Template.calendar.onRendered(() => {
       // we want to shift from 0 -> 1 and 1 -> 0 each time so we can destroy the old popover
       old = index;
       index = boolToIndex(!index);
-
-      // append the day (ie. sun, mon in the form of 0, 1, etc) to the array.
-      Session.set('activeMoment', JSON.stringify(date));
+      Session.set('activeMoment', date.utc().valueOf());
 
       // If i could get this to work with the popover defined in the DOM I would. Any tips?
       popovers[index] = $(this).popover({
@@ -134,18 +131,27 @@ Template.calendar.onRendered(() => {
       wrapper = $('<span class="jm-edit-wrapper"></span>');
       markPaid = $('<span class="glyphicon glyphicon-send" aria-hidden="true"></span>')
       markPaid.click(function() {
-        Expenses.update({'_id': expense.id}, {$set: {paid: true}});
+        Meteor.call('markPaid', expense.id, function(error, res) {
+          if (error) {
+            console.log('MARK PAID ERROR: ' + error);
+          }
+        });
       });
 
       edit = $('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>');
       edit.click(function() {
+        Session.set('activeMoment', expense.start.utc().valueOf());
         Session.set('expenseModalData', {type: 'edit', expense: expense.id});
         $('#new-expense-modal').modal('show');
       });
 
       trash = $('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
       trash.click(function() {
-        Expenses.remove({'_id': expense.id});
+        Meteor.call('removeExpense', expense.id, function(error, res) {
+          if (error) {
+            console.log('REMOVE ERROR: ' + error);
+          }
+        });
       })
 
       markPaid.appendTo(wrapper);
@@ -158,7 +164,6 @@ Template.calendar.onRendered(() => {
       if (expense.type === "balance") {
         return;
       }
-
       // slide edit/delete buttons into view
       $(jsevent.currentTarget).find('.jm-edit-wrapper').toggle('fast');
     },
@@ -167,7 +172,18 @@ Template.calendar.onRendered(() => {
         revertFunc();
         return;
       }
-      Expenses.update({'_id': expense.id}, {$set: {'start': expense.start.startOf('day').valueOf() }});
+      clone = {
+        'id': expense.id,
+        'start': expense.start.utc().startOf('day').valueOf(),
+        'title': expense.title,
+        'amount': expense.amount
+      };
+      //expense.start = moment(expense.start).startOf('day').valueOf();
+      Meteor.call('editExpense', clone, function(error) {
+        if (error) {
+          console.log('editExpense error: ' + error);
+        }
+      });
     }
   });
 
