@@ -45,8 +45,8 @@ Template.newExpenseModal.events({
       title: $(e.target).find('#expenseName').val(),
       type: Session.get('monettype'),
       amount: Number($(e.target).find('#expenseAmount').val()),
-      paid: false,
       start: date,
+      paid: []
       /*reoccurance: {
         'freq': $(e.target).find('.tab-content .active')[0].id,
         'first': date
@@ -71,10 +71,10 @@ Template.newExpenseModal.events({
 
 Template.newExpenseModal.helpers({
   'reoccursYearDate': function() {
-    return "TEMPORARILY DISABLED";
+    return moment(Session.get('activeMoment')).utc().date();
   },
   'reoccursMonthDate': function() {
-    return "TEMPORARILY DISABLED";
+    return moment(Session.get('activeMoment')).date();
   },
   'reoccursWeekDate': function() {
     return "TEMPORARILY DISABLED";

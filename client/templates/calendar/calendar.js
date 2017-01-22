@@ -26,56 +26,97 @@ Template.calendar.onRendered(() => {
     header: {
       right: 'today basicWeek,month prev,next'
     },
-    events: function(start, end, timezone, callback) {
-      bankaccount = 6721.80;
-      let data = Expenses.find({
-        $or: [
-          { $and: [
-            { start: { $gte: moment().utc().startOf('day').valueOf() }},
-            { paid: false }
-          ]},
-          { paid: false }
-        ]
-      }, {sort: {'start': 1} }).fetch().map((expense) => {
+    viewRender: function(view, element) {
+      var fcCenter = element.parents().find('.fc-center');
+      if (fcCenter.children().length == 0) {
+        var accountInput = $('<input id="bank-balance-input"></div>');
+        accountInput.val(Meteor.user().profile.balance);
+        accountInput.addClass('form-control');
+        accountInput.attr('type', 'number');
+        accountInput.keyup(function() {
+          accountUpdated = true;
+          Session.set('accountbalance', $(this).val());
+        });
 
-        if (expense.type === 'expense') {
-          bankaccount = bankaccount - expense.amount;
-        } else if (expense.type === 'income') {
-          // for some reason casting is necessary here? i have no idea why
-          bankaccount = bankaccount + expense.amount;
-        }
-        return [
-          {
+        accountInput.popover({
+          'content': 'Today\'s bank balance',
+          'placement': 'right',
+          'trigger': 'focus',
+          'delay': 175
+        });
+
+        fcCenter.append(accountInput);
+      }
+    },
+    events: function(start, end, timezone, callback) {
+      var bankaccount = Session.get('accountbalance') === undefined
+        ? Meteor.user().profile.balance
+        : Session.get('accountbalance');
+      bankaccount = Number(bankaccount);
+
+      let data = Expenses.find({
+        /*$and: [
+            { start: { $gte: moment(start).utc().startOf('day').valueOf() }},
+            { start: { $lte: moment(end).utc().valueOf() }}
+          ]*/
+      }, {sort: {'start': 1} }).fetch().map((expense) => {
+        return {
             'id': expense._id,
             'start': expense.start,
             'title': expense.title,
             'amount': expense.amount,
             'type': expense.type,
             'textColor': (expense.type === 'expense') ? '#B90000' : '#5CB85C',
-            'editable': !isPast(expense.start)
-          },
-          {
-            'id': expense.start,
-            'start': expense.start,
-            'title': 'Balance',
-            'amount': bankaccount,
-            'type': 'balance',
-            'textColor': '#BDBDBD'
-          }
-        ]
+            'editable': !isPast(expense.start),
+            'paid': expense.paid,
+            'reoccurInterval': 1000 * 60 * 60 * 24 * 7 // 1 week in MS
+          };
       });
 
-      // Fixes the double balance bug by walking the list of bills/balances
-      // backwards and saying "have i already seen this balance event?"
-      // if I have, throw it away. By going backwards we should always have
-      // the most subtracted or most added balance for a given duplicate.
-      // ... I think. It's working so far.
-      data = _.reduceRight(data, function(a, b) {
-        if (_.findWhere(a, {type: 'balance', id: b[1].id})) {
-          return a.concat(b[0]);
+      // Generate future occurances of events.
+      /*
+      future = [];
+      _.map(_.filter(data, (e) => { return e.reoccurInterval > 0; }), (expense) => {
+        var nextOccurance;
+        var nextStart = expense.start + expense.reoccurInterval;
+        while (nextStart <= end) {
+          nextOccurance = _.clone(expense);
+          nextOccurance.start = nextStart;
+          future.push(_.clone(nextOccurance));
+          nextStart = nextStart + expense.reoccurInterval;
         }
-        return a.concat(b);
-      }, []);
+      });
+      data = data.concat(future);
+      */
+      // throw out any member of data whose 'start' is also a member of it's paid array
+      data = _.reject(data, (e) => {
+        return _.contains(e.paid, e.start);
+      });
+
+      // Calculate daily balance for each set of expenses/income
+      _.map(_.uniq(_.pluck(data, 'start')), (s) => {
+        var sum = _.reduce(_.where(data, {'start': s}), (sum, nexp) => {
+          if (nexp.type === 'expense') {
+            return sum - nexp.amount;
+          } else if (nexp.type === 'income') {
+            return sum + nexp.amount;
+          } else {
+            return sum;
+          }
+        }, 0);
+
+        bankaccount = bankaccount + sum;
+
+        data.push({
+          'title': 'Balance',
+          'start': s,
+          'amount': bankaccount,
+          'editable': false,
+          'textColor': '#BDBDBD',
+          'type': 'balance'
+        });
+      });
+
       callback(data);
     },
     eventOrder: "type",
@@ -131,7 +172,8 @@ Template.calendar.onRendered(() => {
       wrapper = $('<span class="jm-edit-wrapper"></span>');
       markPaid = $('<span class="glyphicon glyphicon-send" aria-hidden="true"></span>')
       markPaid.click(function() {
-        Meteor.call('markPaid', expense.id, function(error, res) {
+        var startPaid = expense.start.utc().startOf('day').valueOf();
+        Meteor.call('markPaid', expense.id, startPaid, function(error, res) {
           if (error) {
             console.log('MARK PAID ERROR: ' + error);
           }
@@ -189,6 +231,13 @@ Template.calendar.onRendered(() => {
 
   Tracker.autorun( () => {
     // When new expenses get added to the DB make sure we refresh the calendar
-    $('#calendar').fullCalendar('refetchEvents');
+    var calendar = $('#calendar');
+    var view = calendar.fullCalendar('getView');
+    Expenses.find({$and: [
+      {'start': {$gte: view.start.valueOf()}},
+      {'start': {$lte: view.end.valueOf()}}
+    ]}).fetch();
+    Session.get('accountbalance');
+    calendar.fullCalendar('refetchEvents');
   });
 });
