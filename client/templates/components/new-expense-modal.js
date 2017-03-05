@@ -68,12 +68,12 @@ Template.newExpenseModal.events({
 
 Template.newExpenseModal.helpers({
   'reoccursYearDate': function() {
-    return moment(Session.get('activeMoment')).date();
+    return moment(Session.get('activeMoment')).utc().date();
   },
   'reoccursMonthDate': function() {
-    return moment(Session.get('activeMoment')).date();
+    return moment(Session.get('activeMoment')).utc().date();
   },
   'reoccursWeekDate': function() {
-    return moment(Session.get('activeMoment')).format('dddd');
+    return moment(Session.get('activeMoment')).utc().format('dddd');
   }
 });
