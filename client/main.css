@@ -1,5 +1,5 @@
 body {
-  background-image: url("../public/img/monet.jpg");
+  background-image: url("/public/img/monet.jpg");
 }
 
 #header {

@@ -3,7 +3,7 @@ Template.newExpenseModal.onRendered(() => {
     $('#expenseName').val("");
     $('#expenseAmount').val("");
     Session.set('expenseModalData', undefined);
-    //$('#reoccuranceTabs a[href=#monthly]').tab('show');
+    $('#reoccuranceTabs a[href=#monthly]').tab('show');
   }).on('show.bs.modal', (e) => {
     var modal = $(e.target);
     var link = $(e.relatedTarget);
@@ -46,11 +46,8 @@ Template.newExpenseModal.events({
       type: Session.get('monettype'),
       amount: Number($(e.target).find('#expenseAmount').val()),
       start: date,
-      paid: []
-      /*reoccurance: {
-        'freq': $(e.target).find('.tab-content .active')[0].id,
-        'first': date
-      }*/
+      paid: [],
+      occurance: $(e.target).find('.tab-content .active')[0].id
     }
 
     if (modalData && modalData.type === "edit") {
@@ -71,12 +68,12 @@ Template.newExpenseModal.events({
 
 Template.newExpenseModal.helpers({
   'reoccursYearDate': function() {
-    return moment(Session.get('activeMoment')).utc().date();
+    return moment(Session.get('activeMoment')).date();
   },
   'reoccursMonthDate': function() {
     return moment(Session.get('activeMoment')).date();
   },
   'reoccursWeekDate': function() {
-    return "TEMPORARILY DISABLED";
+    return moment(Session.get('activeMoment')).format('dddd');
   }
 });

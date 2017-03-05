@@ -1,0 +1,51 @@
+<template name="landing">
+  <div class="logincontainer">
+    <div id="wrapper">
+      <div id="login" class="animate form">
+        <form>
+          <h1>Log in</h1>
+          <p>
+            <label for="username" class="uname" > Your email</label>
+            <input id="loginEmail" name="email" required="required" type="email" placeholder="mymail@mail.com"/>
+          </p>
+          <p>
+            <label for="password" class="youpasswd"> Your password </label>
+            <input id="loginPassword" name="password" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd" />
+          </p>
+          <p class="login button">
+            <button class="btn btn-success">Login</button>
+          </p>
+          <p class="change_link">
+            Not a member yet?
+            <a href="#" class="to_register">Join us</a>
+          </p>
+        </form>
+      </div>
+
+      <div id="register" class="animate form">
+        <form>
+          <h1> Sign up </h1>
+          <p>
+            <label for="emailsignup" class="youmail"  > Your email</label>
+            <input id="emailsignup" name="emailsignup" required="required" type="email" placeholder="mymail@mail.com"/>
+          </p>
+          <p>
+            <label for="passwordsignup" class="youpasswd" >Your password </label>
+            <input id="passwordsignup" name="passwordsignup" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+          </p>
+          <p>
+            <label for="passwordsignup_confirm" class="youpasswd" >Please confirm your password </label>
+            <input id="passwordsignup_confirm" name="passwordsignup_confirm" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+          </p>
+          <p class="signin button">
+            <button class="btn btn-success">Sign up</button>
+          </p>
+          <p class="change_link">
+            Already a member?
+            <a href="#tologin" class="to_register"> Go and log in </a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>

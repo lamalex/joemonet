@@ -67,27 +67,28 @@ Template.calendar.onRendered(() => {
             'amount': expense.amount,
             'type': expense.type,
             'textColor': (expense.type === 'expense') ? '#B90000' : '#5CB85C',
-            'editable': !isPast(expense.start),
+            'editable': true,
             'paid': expense.paid,
-            'reoccurInterval': 1000 * 60 * 60 * 24 * 7 // 1 week in MS
+            'occurance': expense.occurance
           };
       });
 
       // Generate future occurances of events.
-      /*
       future = [];
-      _.map(_.filter(data, (e) => { return e.reoccurInterval > 0; }), (expense) => {
+      _.map(_.filter(data, (e) => { return e.occurance !== 'never' && e.occurance !== undefined; }), (expense) => {
         var nextOccurance;
-        var nextStart = expense.start + expense.reoccurInterval;
+        var nextStart = moment(expense.start).utc().add(1, expense.occurance).valueOf();
         while (nextStart <= end) {
           nextOccurance = _.clone(expense);
           nextOccurance.start = nextStart;
           future.push(_.clone(nextOccurance));
-          nextStart = nextStart + expense.reoccurInterval;
+          nextStart = moment(nextOccurance.start).utc().add(1, nextOccurance.occurance).valueOf();
         }
       });
       data = data.concat(future);
-      */
+
+      // FIX ME !! dont erase paid bills, just make them inactive and dont sum them when determining
+      //  bank balances.
       // throw out any member of data whose 'start' is also a member of it's paid array
       data = _.reject(data, (e) => {
         return _.contains(e.paid, e.start);
@@ -95,26 +96,28 @@ Template.calendar.onRendered(() => {
 
       // Calculate daily balance for each set of expenses/income
       _.map(_.uniq(_.pluck(data, 'start')), (s) => {
-        var sum = _.reduce(_.where(data, {'start': s}), (sum, nexp) => {
-          if (nexp.type === 'expense') {
-            return sum - nexp.amount;
-          } else if (nexp.type === 'income') {
-            return sum + nexp.amount;
-          } else {
-            return sum;
-          }
-        }, 0);
+        if (!moment(s).utc().isBefore(moment().utc().startOf('day'))) {
+          var sum = _.reduce(_.where(data, {'start': s}), (sum, nexp) => {
+            if (nexp.type === 'expense') {
+              return sum - nexp.amount;
+            } else if (nexp.type === 'income') {
+              return sum + nexp.amount;
+            } else {
+              return sum;
+            }
+          }, 0);
 
-        bankaccount = bankaccount + sum;
+          bankaccount = bankaccount + sum;
 
-        data.push({
-          'title': 'Balance',
-          'start': s,
-          'amount': bankaccount,
-          'editable': false,
-          'textColor': '#BDBDBD',
-          'type': 'balance'
-        });
+          data.push({
+            'title': 'Balance',
+            'start': s,
+            'amount': bankaccount,
+            'editable': false,
+            'textColor': '#BDBDBD',
+            'type': 'balance'
+          });
+        }
       });
 
       callback(data);
@@ -197,8 +200,7 @@ Template.calendar.onRendered(() => {
       })
 
       markPaid.appendTo(wrapper);
-      if (!isPast(expense.start))
-        edit.appendTo(wrapper);
+      edit.appendTo(wrapper);
       trash.appendTo(wrapper);
       wrapper.appendTo(amount).hide()
     },
