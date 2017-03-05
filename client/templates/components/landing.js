@@ -10,27 +10,14 @@ Template.landing.onRendered(() => {
         console.log(err);
       });
     });
-});
-/*Template.register.events({
-  'submit form': function(e) {
-    e.preventDefault();
-    var email = e.target.registerEmail.value;
-    var passwd = e.target.registerPassword.value;
-    Accounts.createUser({
-      email: email,
-      password: passwd
-    });
-  }
-});
 
-Template.login.events({
-  'submit form': function(e) {
-    e.preventDefault();
-    var email = e.target.loginEmail.value;
-    var passwd = e.target.loginPassword.value;
-    Meteor.loginWithPassword(email, passwd, function(err) {
-      // handle login error!;
+    $('.register').on('click', function(e) {
+      e.preventDefault();
+      var email = $('#registerEmail');
+      var passwd = $('#registerPassword');
+      Accounts.createUser({
+        email: email,
+        password: passwd
+      });
     });
-  }
 });
-*/
