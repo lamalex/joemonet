@@ -5,19 +5,25 @@ Template.landing.onRendered(() => {
 
     $('.login').on('click', function(e) {
       e.preventDefault();
-      console.log('clicked login');
       Meteor.loginWithPassword($('#loginEmail').val(), $('#loginPassword').val(), function(err) {
-        console.log(err);
+
       });
     });
 
     $('.register').on('click', function(e) {
       e.preventDefault();
-      var email = $('#registerEmail');
-      var passwd = $('#registerPassword');
-      Accounts.createUser({
-        email: email,
-        password: passwd
-      });
+      var email = $('#registerEmail').val();
+      var passwd = $('#registerPassword').val();
+      var passwdConfirm = $('#registerPasswordConfirm').val();
+      if (passwd === passwdConfirm) {
+        Accounts.createUser({
+          email: email,
+          password: passwd
+        }, function (err) {
+
+        });
+      }
+      else {
+      }
     });
 });
