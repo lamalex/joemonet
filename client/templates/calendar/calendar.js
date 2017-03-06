@@ -122,7 +122,14 @@ Template.calendar.onRendered(() => {
 
       callback(data);
     },
-    eventOrder: "type,-amount",
+    eventOrder: [function(a,b) {
+      if (a.type === "balance") {
+        return -1
+      } else if (b.type === "balance") {
+        return 1
+      }
+      else return a.type - b.type;
+    }, "-amount"],
     // WORKAROUND: when we switch views destroy all popovers, otherwise they linger
     viewDestroy: function() {
       if (popovers[old] != null) {
