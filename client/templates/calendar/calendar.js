@@ -122,7 +122,7 @@ Template.calendar.onRendered(() => {
 
       callback(data);
     },
-    eventOrder: "type",
+    eventOrder: "type,-amount",
     // WORKAROUND: when we switch views destroy all popovers, otherwise they linger
     viewDestroy: function() {
       if (popovers[old] != null) {
