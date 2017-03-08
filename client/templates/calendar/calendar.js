@@ -249,4 +249,7 @@ Template.calendar.onRendered(() => {
     Session.get('accountbalance');
     calendar.fullCalendar('refetchEvents');
   });
+
+  // prevent these from showing while we're waiting for calendar load. it's ugly.
+  $('.footer-links').show();
 });
