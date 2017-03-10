@@ -1,3 +1,9 @@
+Template.landing.events({
+  'click .change_link a': function(e, template) {
+    $('#register').toggle();
+  }
+});
+
 Template.login.events({
   'submit form': function(e, template) {
     e.preventDefault();
@@ -35,8 +41,5 @@ Template.register.events({
         });
       }
     });
-  },
-  'click .change_link': function(e, template) {
-    $('#register').toggle();
   }
 });
