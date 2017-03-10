@@ -27,7 +27,6 @@ accounts-password@1.3.4
 momentjs:moment
 underscore@1.0.10
 stylus@2.513.9
-ian:accounts-ui-bootstrap-3
 iain:accounting
 aldeed:simple-schema
 aldeed:collection2
