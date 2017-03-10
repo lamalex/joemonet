@@ -1,6 +1,10 @@
 <template name="calendar">
   <div class="container">
-    <div id="calendar"></div>
+    {{#unless currentUser.emails.[0].verified}}
+      <p class="alert alert-warning">You need to verify your email address before you can use JoeMonet. Need use to send another email? <a href="#" class="resend-verify-link">Resend verification link.</a></p>
+    {{else}}
+      <div id="calendar"></div>
+    {{/unless}}
   </div>
   {{> newExpenseModal}}
 </template>

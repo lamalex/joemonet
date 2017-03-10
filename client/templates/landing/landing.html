@@ -1,0 +1,58 @@
+<template name="landing">
+  <div class="logincontainer">
+    <div id="wrapper">
+      {{> login }}
+      {{> register }}
+    </div>
+  </div>
+</template>
+
+<template name="login">
+  <div id="login">
+    <form>
+      <h1>Log in</h1>
+      <p>
+        <label for="loginEmail" class="email" > Your email</label>
+        <input id="loginEmail" name="email" required="required" type="email" placeholder="mymail@mail.com"/>
+      </p>
+      <p>
+        <label for="loginPassword" class="password"> Your password </label>
+        <input id="loginPassword" name="password" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd" />
+      </p>
+      <p class="login button">
+        <input type="submit" class="btn btn-success" value="Login" />
+      </p>
+      <p class="change_link">
+        Not a member yet?
+        <a href="#" class="to_register">Join us</a>
+      </p>
+    </form>
+  </div>
+</template>
+
+<template name="register">
+  <div id="register">
+    <form>
+      <h1> Sign up </h1>
+      <p>
+        <label for="registerEmail" class="email"  > Your email</label>
+        <input id="registerEmail" name="emailsignup" required="required" type="email" placeholder="mymail@mail.com"/>
+      </p>
+      <p>
+        <label for="registerPassword" class="password" >Your password </label>
+        <input id="registerPassword" name="passwordsignup" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+      </p>
+      <p>
+        <label for="registerPasswordConfirm" class="password" >Please confirm your password </label>
+        <input id="registerPasswordConfirm" name="passwordsignup_confirm" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+      </p>
+      <p class="register button">
+        <input type="submit" class="btn btn-success" value="Sign up" />
+      </p>
+      <p class="change_link">
+        Already a member?
+        <a href="#" class="to_login"> Go and log in </a>
+      </p>
+    </form>
+  </div>
+</template>
