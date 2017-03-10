@@ -242,10 +242,16 @@ Template.calendar.onRendered(() => {
     // When new expenses get added to the DB make sure we refresh the calendar
     var calendar = $('#calendar');
     var view = calendar.fullCalendar('getView');
-    Expenses.find({$and: [
-      {'start': {$gte: view.start.valueOf()}},
-      {'start': {$lte: view.end.valueOf()}}
-    ]}).fetch();
+
+    if (view.start && view.end) {
+      Expenses.find({$and: [
+        {'start': {$gte: view.start.valueOf()}},
+        {'start': {$lte: view.end.valueOf()}}
+      ]}).fetch();
+    } else {
+      Expenses.find();
+    }
+
     Session.get('accountbalance');
     calendar.fullCalendar('refetchEvents');
   });
