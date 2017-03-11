@@ -6,9 +6,12 @@ Accounts.onResetPasswordLink((token, done) => {
 
 Template.forgot.events({
   'submit form': function(e, template) {
+    e.preventDefault();
+
     var email = $('#forgotEmail').val();
-    return Accounts.forgotPassword({
-      'email': email
+    Accounts.forgotPassword(email, (err) => {
+      $('#forgotPassword').hide();
+      $('#login').show();
     });
   }
 });
