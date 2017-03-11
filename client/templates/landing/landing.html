@@ -1,8 +1,13 @@
 <template name="landing">
   <div class="logincontainer">
     <div id="wrapper">
-      {{> login }}
-      {{> register }}
+      {{#unless hasToken}}
+        {{> login }}
+        {{> register }}
+        {{> forgot}}
+      {{else}}
+        {{> reset}}
+      {{/unless}}
     </div>
   </div>
 </template>
@@ -16,6 +21,7 @@
         <input id="loginEmail" name="email" required="required" type="email" placeholder="mymail@mail.com"/>
       </p>
       <p>
+        <span ><a href="#" class="forgot-link">Forgot your password?</a></span>
         <label for="loginPassword" class="password"> Your password </label>
         <input id="loginPassword" name="password" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd" />
       </p>
@@ -52,6 +58,68 @@
       <p class="change_link">
         Already a member?
         <a href="#" class="to_login"> Go and log in </a>
+      </p>
+    </form>
+  </div>
+</template>
+
+<template name="forgot">
+  <div id="forgotPassword">
+    <form>
+      <h1>Forgot your password?</h1>
+      <p>
+        <label for="forgotEmail" class="email" > Your email</label>
+        <input id="forgotEmail" name="email" required="required" type="email" placeholder="mymail@mail.com"/>
+      </p>
+      <p class="forgot button">
+        <input type="submit" class="btn btn-success" value="Send reset link" />
+      </p>
+      <!--<p class="change_link">
+        Not a member yet?
+        <a href="#" class="to_register">Join us</a>
+      </p>-->
+    </form>
+  </div>
+</template>
+
+<template name="resetPassword">
+  <div id="login">
+    <form>
+      <h1>Log in</h1>
+      <p>
+        <label for="loginEmail" class="email" > Your email</label>
+        <input id="loginEmail" name="email" required="required" type="email" placeholder="mymail@mail.com"/>
+      </p>
+      <p>
+        <span ><a href="#" class="forgot-link">Forgot your password?</a></span>
+        <label for="loginPassword" class="password"> Your password </label>
+        <input id="loginPassword" name="password" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd" />
+      </p>
+      <p class="login button">
+        <input type="submit" class="btn btn-success" value="Login" />
+      </p>
+      <p class="change_link">
+        Not a member yet?
+        <a href="#" class="to_register">Join us</a>
+      </p>
+    </form>
+  </div>
+</template>
+
+<template name="reset">
+  <div id="reset">
+    <form>
+      <h1> Reset your password </h1>
+      <p>
+        <label for="resetPassword" class="password" >New password </label>
+        <input id="resetPassword" name="newpassword" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+      </p>
+      <p>
+        <label for="resetPasswordConfirm" class="password" >Please confirm your password </label>
+        <input id="resetPasswordConfirm" name="resetpassword_confirm" required="required" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+      </p>
+      <p class="reset button">
+        <input type="submit" class="btn btn-success" value="Reset your password" />
       </p>
     </form>
   </div>

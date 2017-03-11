@@ -85,6 +85,13 @@
 	position: relative;
 }
 
+#wrapper p span a {
+  float: right;
+  color: rgb(4, 94, 96);
+  text-decoration: blink;
+  font-style: italic;
+}
+
 /**** advanced input styling ****/
 /* placeholder */
 ::-webkit-input-placeholder  {
@@ -165,6 +172,8 @@ p.change_link{
 }
 
 /** Styling both forms **/
+#reset,
+#forgotPassword,
 #register,
 #login{
 	position: absolute;
@@ -177,4 +186,8 @@ p.change_link{
 
 #register{
 	display:none;
+}
+
+#forgotPassword {
+  display:none;
 }

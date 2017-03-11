@@ -4,6 +4,12 @@ Template.landing.events({
   }
 });
 
+Template.landing.helpers({
+  'hasToken': function() {
+    return Session.get('resetPasswordToken');
+  }
+})
+
 Template.login.events({
   'submit form': function(e, template) {
     e.preventDefault();
@@ -12,6 +18,13 @@ Template.login.events({
       console.log(err);
     });
   }
+});
+
+Template.login.events({
+  'click .forgot-link': function(e, template) {
+    $('#wrapper').children().hide()
+    $('#forgotPassword').show();
+  },
 });
 
 Template.register.events({
