@@ -34,8 +34,8 @@ Template.calendar.onRendered(() => {
         accountInput.addClass('form-control');
         accountInput.attr('type', 'number');
         accountInput.keyup(function() {
-          accountUpdated = true;
           Session.set('accountbalance', $(this).val());
+          Meteor.users.update(Meteor.userId(), {$set: {"profile.balance": $(this).val()}});
         });
 
         accountInput.popover({
