@@ -1,0 +1,30 @@
+<template name="register">
+  <form id="register">
+    <h1> Sign up </h1>
+    <div id="email-group" class="form-group">
+      <p>
+        <label for="registerEmail" class="form-control-label"  > Your email</label>
+        <input id="registerEmail" class="form-control" name="registeremail" type="email" placeholder="mymail@mail.com"/>
+      </p>
+    </div>
+    <div id="password-group" class="form-group">
+      <p>
+        <label for="registerPassword" class="form-control-label" >Your password </label>
+        <input id="registerPassword" class="form-control" name="registerpassword" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+      </p>
+    </div>
+    <div id="confirm-password-group" class="form-group">
+      <p>
+        <label for="registerPasswordConfirm" class="form-control-label" >Please confirm your password </label>
+        <input id="registerPasswordConfirm" class="form-control" name="registerpassword_confirm" type="password" placeholder="y0urGR3@7P@ssw0rd"/>
+      </p>
+    </div>
+    <div class="form-group">
+      <input type="submit" class="btn btn-success btn-block" value="Sign up" />
+    </div>
+    <p class="change_link">
+      Already a member?
+      <a href="/login" class="to_login"> Go and log in </a>
+    </p>
+  </form>
+</template>
