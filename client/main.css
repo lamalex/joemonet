@@ -5,6 +5,16 @@
   color: #fff;
 }
 
+#main {
+  position: relative;
+}
+
+.page {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+}
+
 .fc-time {
   font-weight: normal;
   float: right;
