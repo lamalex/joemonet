@@ -96,7 +96,7 @@ Template.calendar.onRendered(() => {
 
       // Calculate daily balance for each set of expenses/income
       _.map(_.uniq(_.pluck(data, 'start')), (s) => {
-        if (!moment(s).utc().isBefore(moment().utc().startOf('day'))) {
+        if (moment(s).utc().isAfter(moment().utc().startOf('day'))) {
           var sum = _.reduce(_.where(data, {'start': s}), (sum, nexp) => {
             if (nexp.type === 'expense') {
               return sum - nexp.amount;
