@@ -87,18 +87,22 @@ Template.calendar.onRendered(() => {
       });
       data = data.concat(future);
 
-      // FIX ME !! dont erase paid bills, just make them inactive and dont sum them when determining
-      //  bank balances.
-      // throw out any member of data whose 'start' is also a member of it's paid array
-      data = _.reject(data, (e) => {
-        return _.contains(e.paid, e.start);
-      });
-
-      // Calculate daily balance for each set of expenses/income
+      // step 1 (pluck): get every value of start
+      // step 2 (uniq): make that list have no repeats
+      // step 3 (map): if start is after start of today, then
+      // step 3a (where): get every event on a specified start
+      // step 3b (reduce): sum financial events.
       _.map(_.uniq(_.pluck(data, 'start')), (s) => {
         if (moment(s).utc().isAfter(moment().utc().startOf('day'))) {
           var sum = _.reduce(_.where(data, {'start': s}), (sum, nexp) => {
-            if (nexp.type === 'expense') {
+
+            // If the pill is paid (its paid array contains its own start date)
+            // then change its color, and don't count it towards the day's balance.
+            // Otherswise subtract (expense) or add (income) to our running tally.
+            if (_.contains(nexp.paid, nexp.start)) {
+              nexp.textColor = "rgba(32,76,32,0.25)";
+              return sum;
+            } else if (nexp.type === 'expense') {
               return sum - nexp.amount;
             } else if (nexp.type === 'income') {
               return sum + nexp.amount;
