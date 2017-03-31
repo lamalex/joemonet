@@ -8,8 +8,12 @@ function boolToIndex(bool) {
 }
 
 function isPast(date) {
-  var today = moment().utc().startOf('day').valueOf();
-  return moment(today).isAfter(date);
+  if (!(date instanceof moment)) {
+    date = moment(date);
+  }
+
+  var today = moment().utc().subtract(1, 'day').endOf('day');
+  return date.utc().isBefore(today);
 }
 
 //duplicated code broken out into a function
@@ -27,6 +31,57 @@ Template.calendar.onRendered(() => {
       right: 'today basicWeek,month prev,next'
     },
     viewRender: function(view, element) {
+      // clean out old generated expenses
+      Meteor.call('cleanGenerated', (error, result) => {
+        if (error) {
+          console.log(error);
+        }
+      });
+      // Generate future expenses
+      let data = Expenses.find({
+        start: { $lte: view.end.endOf('day').valueOf() }
+      }, {sort: {'start': 1} }).fetch().map((expense) => {
+        return {
+            'id': expense._id,
+            'start': expense.start,
+            'title': expense.title,
+            'amount': expense.amount,
+            'type': expense.type,
+            'textColor': (expense.type === 'expense') ? '#B90000' : '#5CB85C',
+            'editable': true,
+            'paid': expense.paid,
+            'occurance': expense.occurance,
+            'generated': expense.generated
+          };
+      });
+
+      // Generate future occurances of events.
+      _.map(_.filter(data, (e) => { return e.occurance !== 'never' && e.occurance !== undefined; }), (expense) => {
+        var nextOccurance;
+        var nextStart = moment(expense.start).utc().add(1, expense.occurance).valueOf();
+        while (nextStart <= view.end) {
+          nextOccurance = _.clone(expense);
+          nextOccurance.start = nextStart;
+          nextOccurance.generated = true;
+          nextOccurance = _.pick(nextOccurance,
+            'title',
+            'type',
+            'amount',
+            'start',
+            'paid',
+            'occurance',
+            'generated'
+          );
+
+          Meteor.call('addExpense', nextOccurance, function(error, id) {
+            if (error) {
+              console.log(error);
+            }
+          });
+          nextStart = moment(nextOccurance.start).utc().add(1, nextOccurance.occurance).valueOf();
+        }
+      });
+
       var fcCenter = element.parents().find('.fc-center');
       if (fcCenter.children().length == 0) {
         var accountInput = $('<input id="bank-balance-input"></div>');
@@ -54,11 +109,12 @@ Template.calendar.onRendered(() => {
         : Session.get('accountbalance');
       bankaccount = Number(bankaccount);
 
+      // What I really want is FullExpenses.find()-- but how do i know how far out to
+      // project? I need it to be a live expansion of results.
+      // I would be ok with this code living in the client except I want to use aggregation!
+      // what happens if I meteor.call with an entire collection?
       let data = Expenses.find({
-        /*$and: [
-            { start: { $gte: moment(start).utc().startOf('day').valueOf() }},
-            { start: { $lte: moment(end).utc().valueOf() }}
-          ]*/
+        start: { $lte: end.endOf('day').valueOf() }
       }, {sort: {'start': 1} }).fetch().map((expense) => {
         return {
             'id': expense._id,
@@ -73,58 +129,40 @@ Template.calendar.onRendered(() => {
           };
       });
 
-      // Generate future occurances of events.
-      future = [];
-      _.map(_.filter(data, (e) => { return e.occurance !== 'never' && e.occurance !== undefined; }), (expense) => {
-        var nextOccurance;
-        var nextStart = moment(expense.start).utc().add(1, expense.occurance).valueOf();
-        while (nextStart <= end) {
-          nextOccurance = _.clone(expense);
-          nextOccurance.start = nextStart;
-          future.push(_.clone(nextOccurance));
-          nextStart = moment(nextOccurance.start).utc().add(1, nextOccurance.occurance).valueOf();
-        }
-      });
-      data = data.concat(future);
-
-      // step 1 (pluck): get every value of start
-      // step 2 (uniq): make that list have no repeats
-      // step 3 (map): if start is after start of today, then
-      // step 3a (where): get every event on a specified start
-      // step 3b (reduce): sum financial events.
-      _.map(_.uniq(_.pluck(data, 'start')), (s) => {
-        if (moment(s).utc().isAfter(moment().utc().startOf('day'))) {
-          var sum = _.reduce(_.where(data, {'start': s}), (sum, nexp) => {
-
-            // If the pill is paid (its paid array contains its own start date)
-            // then change its color, and don't count it towards the day's balance.
-            // Otherswise subtract (expense) or add (income) to our running tally.
-            if (_.contains(nexp.paid, nexp.start)) {
-              nexp.textColor = "rgba(32,76,32,0.25)";
-              return sum;
-            } else if (nexp.type === 'expense') {
-              return sum - nexp.amount;
-            } else if (nexp.type === 'income') {
-              return sum + nexp.amount;
-            } else {
-              return sum;
+      Meteor.call('aggregate',
+        {
+          $match: {
+            start: { $lte: end.endOf('day').valueOf() }
+          }
+        },
+        {
+          $group: {
+            _id: '$start', amount: {$sum: '$amount'}
+          }
+        },
+        (error, result) => {
+          if (error) {
+            Bert.alert("SOMESING WONG IN BALANCE aggregate");
+            return;
+          }
+          _.map(_.sortBy(result, '_id'), (sum) => {
+            if (!isPast(sum._id)) {
+              bankaccount = bankaccount + sum.amount;
+              $('#calendar').fullCalendar('removeEvents', sum._id);
+              data.push({
+                'id': sum._id,
+                'title': 'Balance',
+                'start': sum._id,
+                'amount': bankaccount,
+                'editable': false,
+                'textColor': '#BDBDBD',
+                'type': 'balance'
+              });
             }
-          }, 0);
-
-          bankaccount = bankaccount + sum;
-
-          data.push({
-            'title': 'Balance',
-            'start': s,
-            'amount': bankaccount,
-            'editable': false,
-            'textColor': '#BDBDBD',
-            'type': 'balance'
           });
+          callback(data)
         }
-      });
-
-      callback(data);
+      );
     },
     eventOrder: [function(a,b) {
       if (a.type === "balance") {
@@ -223,17 +261,13 @@ Template.calendar.onRendered(() => {
       $(jsevent.currentTarget).find('.jm-edit-wrapper').toggle('fast');
     },
     eventDrop: function(expense, delta, revertFunc) {
-      if (isPast(expense.start)) {
-        revertFunc();
-        return;
-      }
-      clone = {
+      let clone = {
         'id': expense.id,
         'start': expense.start.utc().startOf('day').valueOf(),
         'title': expense.title,
         'amount': expense.amount
       };
-      //expense.start = moment(expense.start).startOf('day').valueOf();
+
       Meteor.call('editExpense', clone, function(error) {
         if (error) {
           console.log('editExpense error: ' + error);

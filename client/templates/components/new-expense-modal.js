@@ -47,7 +47,8 @@ Template.newExpenseModal.events({
       amount: Number($(e.target).find('#expenseAmount').val()),
       start: date,
       paid: [],
-      occurance: $(e.target).find('.tab-content .active')[0].id
+      occurance: $(e.target).find('.tab-content .active')[0].id,
+      generated: false
     }
 
     if (modalData && modalData.type === "edit") {
