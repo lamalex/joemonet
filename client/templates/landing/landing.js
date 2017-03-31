@@ -4,7 +4,7 @@ Template.landing.helpers({
   }
 });
 
-Template.layout.onRendered(function() {
+Template.landing.onRendered(function() {
   this.find('#wrapper')._uihooks = {
     insertElement: function(node, next) {
       $(node)
