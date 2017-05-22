@@ -36,50 +36,51 @@ Template.calendar.onRendered(() => {
         if (error) {
           console.log(error);
         }
-      });
-      // Generate future expenses
-      let data = Expenses.find({
-        start: { $lte: view.end.endOf('day').valueOf() }
-      }, {sort: {'start': 1} }).fetch().map((expense) => {
-        return {
-            'id': expense._id,
-            'start': expense.start,
-            'title': expense.title,
-            'amount': expense.amount,
-            'type': expense.type,
-            'textColor': (expense.type === 'expense') ? '#B90000' : '#5CB85C',
-            'editable': true,
-            'paid': expense.paid,
-            'occurance': expense.occurance,
-            'generated': expense.generated
-          };
-      });
 
-      // Generate future occurances of events.
-      _.map(_.filter(data, (e) => { return e.occurance !== 'never' && e.occurance !== undefined; }), (expense) => {
-        var nextOccurance;
-        var nextStart = moment(expense.start).utc().add(1, expense.occurance).valueOf();
-        while (nextStart <= view.end) {
-          nextOccurance = _.clone(expense);
-          nextOccurance.start = nextStart;
-          nextOccurance.generated = true;
-          nextOccurance = _.pick(nextOccurance,
-            'title',
-            'type',
-            'amount',
-            'start',
-            'paid',
-            'occurance',
-            'generated'
-          );
+        // Generate future expenses
+        let data = Expenses.find({
+          start: { $lte: view.end.endOf('day').valueOf() }
+        }, {sort: {'start': 1} }).fetch().map((expense) => {
+          return {
+              'id': expense._id,
+              'start': expense.start,
+              'title': expense.title,
+              'amount': expense.amount,
+              'type': expense.type,
+              'textColor': (expense.type === 'expense') ? '#B90000' : '#5CB85C',
+              'editable': true,
+              'paid': expense.paid,
+              'occurance': expense.occurance,
+              'generated': expense.generated
+            };
+        });
 
-          Meteor.call('addExpense', nextOccurance, function(error, id) {
-            if (error) {
-              console.log(error);
-            }
-          });
-          nextStart = moment(nextOccurance.start).utc().add(1, nextOccurance.occurance).valueOf();
-        }
+        // Generate future occurances of events.
+        _.map(_.filter(data, (e) => { return e.occurance !== 'never' && e.occurance !== undefined; }), (expense) => {
+          var nextOccurance;
+          var nextStart = moment(expense.start).utc().add(1, expense.occurance).valueOf();
+          while (nextStart <= view.end) {
+            nextOccurance = _.clone(expense);
+            nextOccurance.start = nextStart;
+            nextOccurance.generated = true;
+            nextOccurance = _.pick(nextOccurance,
+              'title',
+              'type',
+              'amount',
+              'start',
+              'paid',
+              'occurance',
+              'generated'
+            );
+
+            Meteor.call('addExpense', nextOccurance, function(error, id) {
+              if (error) {
+                console.log(error);
+              }
+            });
+            nextStart = moment(nextOccurance.start).utc().add(1, nextOccurance.occurance).valueOf();
+          }
+        });
       });
 
       var fcCenter = element.parents().find('.fc-center');
@@ -129,6 +130,45 @@ Template.calendar.onRendered(() => {
           };
       });
 
+      /*
+      var firstOfMonth;
+      var endOfMonth;
+
+      if (start.date() === 1) {
+        firstOfMonth = start.valueOf();
+      } else {
+        firstOfMonth = start.add(1, 'month').startOf('month').valueOf();
+      }
+
+      if (end.date() > 28) {
+        endOfMonth = end.valueOf();
+      } else {
+        endOfMonth = end.subtract(1, 'month').endOf('month').valueOf();
+      }
+
+      Meteor.call('aggregate',
+        {
+          $match: {
+              $and: [
+                { start: { $gte: firstOfMonth }},
+                { start: { $lte: endOfMonth }}
+              ]
+          }
+        },
+        {
+          $group: {
+            _id: '$type', amount: {$sum: '$amount'}
+          }
+        },
+        (error, result) => {
+          if (error) {
+            console.log(error);
+          }
+
+          console.log(result);
+        }
+      );
+      */
       Meteor.call('aggregate',
         {
           $match: {
@@ -147,6 +187,7 @@ Template.calendar.onRendered(() => {
           }
           _.map(_.sortBy(result, '_id'), (sum) => {
             if (!isPast(sum._id)) {
+              console.log(sum._id + ': ' +  bankaccount + ' - ' + sum.amount);
               bankaccount = bankaccount + sum.amount;
               $('#calendar').fullCalendar('removeEvents', sum._id);
               data.push({
