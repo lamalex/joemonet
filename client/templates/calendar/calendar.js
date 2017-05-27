@@ -27,11 +27,22 @@ function destroyPopover(i) {
 
 Template.calendar.onRendered(() => {
   $('#calendar').fullCalendar({
+    customButtons: {
+        budget: {
+            text: 'budget',
+            icon: 'fa-money',
+            click: () => {
+              $('#budget-sidebar').css('width', '40%');
+            }
+        }
+    },
     header: {
-      right: 'today basicWeek,month prev,next'
+      right: 'today basicWeek,month prev,next budget'
     },
     viewRender: function(view, element) {
       // clean out old generated expenses
+      $('.fc-icon-fa-money').append('<i class="fa fa-money"></i>');
+      
       Meteor.call('cleanGenerated', (error, result) => {
         if (error) {
           console.log(error);
@@ -187,7 +198,7 @@ Template.calendar.onRendered(() => {
           }
           _.map(_.sortBy(result, '_id'), (sum) => {
             if (!isPast(sum._id)) {
-              console.log(sum._id + ': ' +  bankaccount + ' - ' + sum.amount);
+              //console.log(sum._id + ': ' +  bankaccount + ' - ' + sum.amount);
               bankaccount = bankaccount + sum.amount;
               $('#calendar').fullCalendar('removeEvents', sum._id);
               data.push({

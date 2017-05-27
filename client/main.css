@@ -1,5 +1,8 @@
-.jumbotron,
-#header {
+body {
+  /*transition: background-color .5s;*/
+}
+
+.jumbotron {
   padding-top: 0px;
   background-color: #5cb85c;
   color: #fff;
@@ -7,6 +10,8 @@
 
 #main {
   position: relative;
+  transition: margin-right .5s;
+  padding: 16px;
 }
 
 .page {
@@ -22,4 +27,43 @@
 
 .hidden {
   display: none;
+}
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    right: 0;
+    background-color: rgba(17, 17, 17, 0.8);;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    color: #FFF;
+}
+
+.sidebar .content {
+  padding: 25px;
+}
+
+.sidebar a {
+    padding: 8px 8px 8px 8px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #FFF;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 0px;
+    font-size: 36px;
+    margin-left: 50px;
 }
