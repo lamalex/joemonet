@@ -41,8 +41,6 @@ Template.calendar.onRendered(() => {
     },
     viewRender: function(view, element) {
       // clean out old generated expenses
-      $('.fc-icon-fa-money').append('<i class="fa fa-money"></i>');
-      
       Meteor.call('cleanGenerated', (error, result) => {
         if (error) {
           console.log(error);
@@ -327,6 +325,7 @@ Template.calendar.onRendered(() => {
       });
     }
   });
+  $('.fc-icon-fa-money').append('<i class="fa fa-money"></i>');
 
   Tracker.autorun( () => {
     // When new expenses get added to the DB make sure we refresh the calendar
