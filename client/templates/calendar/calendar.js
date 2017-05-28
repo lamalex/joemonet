@@ -32,7 +32,7 @@ Template.calendar.onRendered(() => {
             text: 'budget',
             icon: 'fa-money',
             click: () => {
-              $('#budget-sidebar').css('width', '40%');
+              $('#budget-sidebar').css('width', '45%');
             }
         }
     },
@@ -99,8 +99,9 @@ Template.calendar.onRendered(() => {
         accountInput.addClass('form-control');
         accountInput.attr('type', 'number');
         accountInput.keyup(function() {
-          Session.set('accountbalance', $(this).val());
-          Meteor.users.update(Meteor.userId(), {$set: {"profile.balance": $(this).val()}});
+          var bal = Number($(this).val());
+          Session.set('accountbalance', bal);
+          Meteor.users.update(Meteor.userId(), {$set: {"profile.balance": bal}});
         });
 
         accountInput.popover({
@@ -114,10 +115,13 @@ Template.calendar.onRendered(() => {
       }
     },
     events: function(start, end, timezone, callback) {
-      var bankaccount = Session.get('accountbalance') === undefined
-        ? Meteor.user().profile.balance
-        : Session.get('accountbalance');
-      bankaccount = Number(bankaccount);
+      var bankaccount = Number(Session.get('accountbalance'));
+      if (bankaccount === undefined) {
+        bankaccount = Meteor.user().profile.balance;
+        Session.set('accountbalance', bankaccount);
+      } else {
+        bankaccount = Session.get('accountbalance');
+      }
 
       // What I really want is FullExpenses.find()-- but how do i know how far out to
       // project? I need it to be a live expansion of results.
@@ -139,9 +143,9 @@ Template.calendar.onRendered(() => {
           };
       });
 
-      /*
       var firstOfMonth;
       var endOfMonth;
+
 
       if (start.date() === 1) {
         firstOfMonth = start.valueOf();
@@ -174,10 +178,11 @@ Template.calendar.onRendered(() => {
             console.log(error);
           }
 
-          console.log(result);
+          Session.set('monthIncome', result[0].amount);
+          Session.set('monthExpenses', result[1].amount);
         }
       );
-      */
+
       Meteor.call('aggregate',
         {
           $match: {

@@ -2,13 +2,19 @@
   <div id="budget-sidebar" class="sidebar">
     <a href="#" class="closebtn"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
     <div class="content">
+      <h3>Money in the bank: {{ bankBalance }}</h3>
+      <h3>This month's income: {{ monthIncome }}</h3>
+      <h3>This month's expenses: {{ monthExpenses }}</h3>
+      <h3>Change this month: {{ flexNumber }}</h3>
+      <h3>Available to spend: {{ availableFunds }}</h3>
+      
       <form>
         <div class="form-group">
           <label for="slider1">Budget for something</label>
           <div>
-            <input class="jm-slider" id="slider1" type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="100"/>
+            <input id="slider1" type="text" data-slider-min="0" data-slider-max="{{ availableFundsAsNumber }}" data-slider-step="1" data-slider-value="0"/>
             <span id="slider1CurrentSliderValLabel">
-              <span id="slider1SliderVal">3</span>
+              <span id="slider1SliderVal">0</span>
             </span>
           </div>
         </div>
@@ -16,9 +22,9 @@
         <div class="form-group">
           <label for="slider2">Budget for something else</label>
           <div>
-            <input id="slider2" type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="100"/>
+            <input id="slider2" type="text" data-slider-min="0" data-slider-max="{{ availableFundsAsNumber }}" data-slider-step="1" data-slider-value="0"/>
             <span id="slider2CurrentSliderValLabel">
-              <span id="slider2SliderVal">3</span>
+              <span id="slider2SliderVal">0</span>
             </span>
           </div>
         </div>
@@ -26,9 +32,9 @@
         <div class="form-group">
           <label for="slider3">Budget for yet another thing</label>
           <div>
-            <input id="slider3" type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="100"/>
+            <input id="slider3" type="text" data-slider-min="0" data-slider-max="{{ availableFundsAsNumber }}" data-slider-step="1" data-slider-value="0"/>
             <span id="slider3CurrentSliderValLabel">
-              <span id="slider3SliderVal">3</span>
+              <span id="slider3SliderVal">0</span>
             </span>
           </div>
         </div>
