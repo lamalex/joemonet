@@ -52,8 +52,7 @@ Template.newCashFlowModal.events({
       amount: Number($(e.target).find('#cashFlowAmount').val()),
       start: date,
       paid: false,
-      occurance: $(e.target).find('.tab-content .active')[0].id,
-      origin: undefined
+      occurance: $(e.target).find('.tab-content .active')[0].id
     }
     
     Meteor.call('addFlow', flow, function(error) {
