@@ -46,10 +46,10 @@ Template.newCashFlowModal.events({
     var date = Session.get('activeMoment');
     date = moment(date).utc().startOf('day').valueOf();
 
-    var expense = {
-      title: $(e.target).find('#expenseName').val(),
+    var flow = {
+      title: $(e.target).find('#cashFlowName').val(),
       type: Session.get('cashFlowType'),
-      amount: Number($(e.target).find('#expenseAmount').val()),
+      amount: Number($(e.target).find('#cashFlowAmount').val()),
       start: date,
       paid: false,
       occurance: $(e.target).find('.tab-content .active')[0].id,
@@ -57,14 +57,14 @@ Template.newCashFlowModal.events({
       origin: undefined
     }
     
-    Meteor.call('addExpense', expense, function(error) {
+    Meteor.call('addFlow', flow, function(error) {
       if (error)
         Bert.alert({
           type: 'danger',
-          message: error,
+          message: error.message,
           style: 'growl-top-right'
         });
-        console.log('addExpense error: ' + error);
+        console.log('addFlow error: ' + error);
     });
 
     /*
