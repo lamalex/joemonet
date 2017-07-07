@@ -47,12 +47,12 @@ Template.newCashFlowModal.events({
     date = moment(date).utc().startOf('day').valueOf();
 
     var expense = {
-      title: $(this).find('#expenseName').val(),
+      title: $(e.target).find('#expenseName').val(),
       type: Session.get('cashFlowType'),
-      amount: Number($(this).find('#expenseAmount').val()),
+      amount: Number($(e.target).find('#expenseAmount').val()),
       start: date,
       paid: false,
-      occurance: $(this).find('.tab-content .active')[0].id,
+      occurance: $(e.target).find('.tab-content .active')[0].id,
       generated: false,
       origin: undefined
     }
