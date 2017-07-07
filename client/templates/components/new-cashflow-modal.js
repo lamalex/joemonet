@@ -53,7 +53,6 @@ Template.newCashFlowModal.events({
       start: date,
       paid: false,
       occurance: $(e.target).find('.tab-content .active')[0].id,
-      generated: false,
       origin: undefined
     }
     
