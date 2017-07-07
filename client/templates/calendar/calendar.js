@@ -67,6 +67,7 @@ Template.calendar.onRendered(() => {
 
       var wrapper = $('<span class="jm-edit-wrapper"></span>');
 
+      /*
       var markPaid = $('<span class="glyphicon glyphicon-send" aria-hidden="true">&nbsp;</span>')
       markPaid.click(function() {
         var startPaid = flow.start.utc().startOf('day').valueOf();
@@ -88,6 +89,7 @@ Template.calendar.onRendered(() => {
         $('#new-cashflow-modal').modal('show');
       });
 
+      */
       var trash = $('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
       trash.click(function() {
         Meteor.call('removeFlow', flow.id, function(error, res) {
@@ -101,8 +103,8 @@ Template.calendar.onRendered(() => {
         });
       })
 
-      markPaid.appendTo(wrapper);
-      edit.appendTo(wrapper);
+      //markPaid.appendTo(wrapper);
+      //edit.appendTo(wrapper);
       trash.appendTo(wrapper);
 
       wrapper.appendTo(element.find('.back'));
