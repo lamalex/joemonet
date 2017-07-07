@@ -119,10 +119,21 @@ Template.calendar.onRendered(() => {
       if (flow.type === "balance") {
         return;
       }
-      // flip all cards to their value facing side
-      $('.card').flip(false);
-      // flip target to show buttons
-      $(this).find('.card').flip('toggle');
+
+      var active = $(this).find('.card');
+      // If the flow event we clicked is already showing its buttons
+      // then we flip it back to its amount.
+      if (active.hasClass('flipped')) {
+        active.flip(true);
+        active.removeClass('flipped');
+      } else {
+        // If not, then we flip any buttons being shown back to prices, flip
+        // the selected one, and annotate it as flipped
+        $('.flipped').flip(false);
+        $('.flipped').removeClass('flipped');
+        active.flip('toggle');
+        active.addClass('flipped');
+      }
     },
     viewDestroy: function() {
       $('.popover').popover('destroy');
