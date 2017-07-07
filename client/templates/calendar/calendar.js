@@ -34,8 +34,8 @@ Template.calendar.onRendered(() => {
         placement: 'top',
         trigger: 'click',
         content: `
-          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-monettype="expense">Add an expense</a> |
-          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-monettype="income">Add income</a>
+          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-cashflowtype="expense">Add an expense</a> |
+          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-cashflowtype="income">Add income</a>
         `
       });
       $(this).popover('show');
