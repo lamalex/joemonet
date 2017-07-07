@@ -1,23 +1,23 @@
-<template name="newExpenseModal">
-  <div class="modal fade" id="new-expense-modal" tabindex="-1" role="dialog" aria-labelledby="add-expense-label">
+<template name="newCashFlowModal">
+  <div class="modal fade" id="new-cashflow-modal" tabindex="-1" role="dialog" aria-labelledby="add-cashflow-label">
     <div class="modal-dialog" role="document">
       <form>
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="add-expense-label">Add an Expense</h4>
+            <h4 class="modal-title" id="add-cashflow-label">Add {{cashFlowType}}</h4>
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label for="expenseName">Name:</label>
-              <input class="form-control" id="expenseName" placeholder="Your expense's name here">
+              <label for="cashFlowName">Name:</label>
+              <input class="form-control" id="cashFlowName" placeholder="Your {{cashFlowType}}'s name here">
             </div>
             <div class="form-group">
-              <label for="expenseAmount">Amount:</label>
-              <input class="form-control" type="number" id="expenseAmount" placeholder="Amount of expense" step=".01" pattern="^\d+(\.|\,)\d{2}$">
+              <label for="cashFlowAmount">Amount:</label>
+              <input class="form-control" type="number" id="cashFlowAmount" placeholder="Amount of {{cashFlowType}}" step=".01" pattern="^\d+(\.|\,)\d{2}$">
             </div>
             <div id="reoccuranceTabs" class="form-group">
-              <label for="expenseReoccurance">Reoccurs:</label>
+              <label for="cashFlowReoccurance">Reoccurs:</label>
               <div>
                 <ul class="nav nav-pills" role="tablist">
                   <li role="presentation"><a href="#year" aria-controls="year" role="tab" data-toggle="pill">Yearly</a></li>
@@ -27,18 +27,24 @@
                 </ul>
                 <div class="tab-content">
                   <div role="tabpanel" class="tab-pane" id="year">
-                    Bill reoccurs yearly on the {{reoccursYearDate}}.
+                    <p>
+                      {{cashFlowType}} reoccurs yearly on the {{reoccursYearDate}}.
+                    </p>
                   </div>
                   <div role="tabpanel" class="tab-pane active" id="month">
                     <p>
-                      Bill reoccurs monthly on the {{reoccursMonthDate}}.
+                      {{cashFlowType}} reoccurs monthly on the {{reoccursMonthDate}}.
                     </p>
                   </div>
                   <div role="tabpanel" class="tab-pane" id="week">
-                    Bill reoccurs weekly on {{reoccursWeekDate}}.
+                    <p>
+                      {{cashFlowType}} reoccurs weekly on {{reoccursWeekDate}}.
+                    </p>
                   </div>
                   <div role="tabpanel" class="tab-pane" id="never">
-                    Bill does not reoccur.
+                    <p>
+                      {{cashFlowType}} does not reoccur.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -46,7 +52,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <input id="expenseSubmit" type="submit" class="btn btn-primary" value="Add Expense"/>
+            <input id="cashFlowSubmit" type="submit" class="btn btn-primary" value="{{cashFlowModalAction}} {{cashFlowType}}"/>
           </div>
         </div>
       </form>

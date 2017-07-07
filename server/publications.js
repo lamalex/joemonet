@@ -1,3 +1,3 @@
-Meteor.publish('expenses', function() {
-  return Expenses.find({'userId': this.userId});
+Meteor.publish('cashflow', function() {
+  return CashFlow.find({'userId': this.userId});
 });

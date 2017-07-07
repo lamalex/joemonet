@@ -1,40 +1,43 @@
-Template.newExpenseModal.onRendered(() => {
-  $('#new-expense-modal').on('hide.bs.modal', (e) => {
-    $('#expenseName').val("");
-    $('#expenseAmount').val("");
-    Session.set('expenseModalData', undefined);
+Template.newCashFlowModal.onRendered(() => {
+  $('#new-cashflow-modal').on('hide.bs.modal', (e) => {
+    // Reset fields
+    $('#cashFlowName').val("");
+    $('#cashFlowAmount').val("");
+    Session.set('cashFlowModalData', undefined);
     $('#reoccuranceTabs a[href=#monthly]').tab('show');
-  }).on('show.bs.modal', (e) => {
-    var modal = $(e.target);
+  }).on('show.bs.modal', function(e) {
+    $('.popover').popover('destroy');
+    var modal = $(this);
     var link = $(e.relatedTarget);
-    var modalData = Session.get('expenseModalData');
+    var modalData = Session.get('cashFlowModalData');
 
-    var expenseType = link.data('monettype');
-    if (expenseType === undefined && modalData !== undefined) {
-      var expense = Expenses.findOne({'_id': modalData.expense});
-      expenseType = expense.type;
+    var flowType = link.data('monettype');
+    if (flowType === undefined && modalData !== undefined) {
+      var flow = CashFlow.findOne({'_id': modalData.flow});
+      flowType = (flow.amount < 0) ? "expense" : "income"
     }
 
-    Session.set('monettype', expenseType);
+    Session.set('cashFlowType', flowType);
 
-    var addLabel = modal.find('#add-expense-label');
-    addLabel.text('Add an ' + expenseType);
-    var nameInput = modal.find('#expenseName');
-    nameInput.attr('placeholder', 'Your ' + expenseType + '\'s name.');
-    var amountInput = modal.find('#expenseAmount');
-    amountInput.attr('placeholder', 'Your ' + expenseType + '\'s amount.');
-    var submitButton = modal.find('#expenseSubmit');
-    submitButton.val("Add " + expenseType);
+    var addLabel = modal.find('#add-cashflow-label');
+    addLabel.text('Add an ' + flowType);
+    var nameInput = modal.find('#cashFlowName');
+    nameInput.attr('placeholder', 'Your ' + flowType + '\'s name.');
+    var amountInput = modal.find('#cashFlowAmount');
+    amountInput.attr('placeholder', 'Your ' + flowType + '\'s amount.');
+    var submitButton = modal.find('#cashFlowSubmit');
+    submitButton.val("Add " + flowType);
 
     if (modalData && modalData.type === 'edit') {
-      submitButton.val("Update " + expenseType);
-      nameInput.val(expense.title);
-      amountInput.val(expense.amount);
+      submitButton.val("Update " + flowType);
+      nameInput.val(flow.title);
+      amountInput.val(flow.amount);
     }
   });
 });
 
-Template.newExpenseModal.events({
+/*
+Template.newCashFlowModal.events({
   'submit form': function(e) {
     e.preventDefault();
     var modalData = Session.get('expenseModalData');
@@ -66,8 +69,19 @@ Template.newExpenseModal.events({
     $('#new-expense-modal').modal('hide');
   }
 })
+*/
 
-Template.newExpenseModal.helpers({
+Template.newCashFlowModal.helpers({
+  'cashFlowType': () => {
+    return Session.get('cashFlowType');
+  },
+  'cashFlowModalAction': () => {
+    var modalData = Session.get('cashFlowModalData');
+    if (modalData) {
+      return modalData.type;
+    }
+    return "Add";
+  },
   'reoccursYearDate': function() {
     return moment(Session.get('activeMoment')).utc().date();
   },
