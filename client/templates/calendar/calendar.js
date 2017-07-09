@@ -21,7 +21,8 @@ Template.calendar.onRendered(() => {
             'textColor': (flow.amount < 0) ? '#B90000' : '#5CB85C',
             'editable': true,
             'paid': flow.paid,
-            'occurance': flow.occurance
+            'occurance': flow.occurance,
+            'origin': flow.origin ? flow.origin : flow._id
           };
       });
 
@@ -93,7 +94,7 @@ Template.calendar.onRendered(() => {
 
       */
       var trashHtml = `
-      <a href="#delete-cashflow-modal" data-toggle="modal" data-flow-id="${flow.id}" data-flow-title="${flow.title}" data-flow-occurance="${flow.occurance}">
+      <a href="#delete-cashflow-modal" data-toggle="modal" data-flow-id="${flow.id}" data-flow-title="${flow.title}" data-flow-occurance="${flow.occurance}" data-flow-origin="${flow.origin}">
         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
       </a>
       `
