@@ -12,18 +12,20 @@ Template.calendar.onRendered(() => {
 
       let data = CashFlow.find({
         start: { $lte: end.endOf('day').valueOf() }
-      }, {sort: {'start': 1} }).fetch().map((flow) => {
+      }, {sort: {'start': 1} }).fetch().filter((flow) => {
+        return !flow.deleted;
+      }).map((flow) => {
         return {
-            'id': flow._id,
-            'start': flow.start,
-            'title': flow.title,
-            'amount': flow.amount,
-            'textColor': (flow.amount < 0) ? '#B90000' : '#5CB85C',
-            'editable': true,
-            'paid': flow.paid,
-            'occurance': flow.occurance,
-            'origin': flow.origin ? flow.origin : flow._id
-          };
+          'id': flow._id,
+          'start': flow.start,
+          'title': flow.title,
+          'amount': flow.amount,
+          'textColor': (flow.amount < 0) ? '#B90000' : '#5CB85C',
+          'editable': true,
+          'paid': flow.paid,
+          'occurance': flow.occurance,
+          'origin': flow.origin
+        };
       });
 
       callback(data);
@@ -94,7 +96,7 @@ Template.calendar.onRendered(() => {
 
       */
       var trashHtml = `
-      <a href="#delete-cashflow-modal" data-toggle="modal" data-flow-id="${flow.id}" data-flow-title="${flow.title}" data-flow-occurance="${flow.occurance}" data-flow-origin="${flow.origin}">
+      <a href="#delete-cashflow-modal" data-toggle="modal" data-flow-id="${flow.id}" data-flow-title="${flow.title}" data-flow-occurance="${flow.occurance}" data-flow-origin="${flow.origin}" data-flow-start="${flow.start}">
         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
       </a>
       `

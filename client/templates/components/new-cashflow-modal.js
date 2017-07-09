@@ -46,7 +46,6 @@ Template.newCashFlowModal.events({
       occurance: $('#reoccuranceTabs').find('li.active').text()
     }
 
-    console.log('adding flow': flow);
     Meteor.call('addFlow', flow, function(error, response) {
       if (error) {
         Bert.alert({
@@ -54,7 +53,6 @@ Template.newCashFlowModal.events({
           message: error.message,
           style: 'growl-top-right'
         });
-        console.log('addFlow error: ' + error);
       }
       $('#new-cashflow-modal').modal('hide');
     });
