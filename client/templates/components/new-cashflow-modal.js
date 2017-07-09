@@ -1,27 +1,18 @@
 Template.newCashFlowModal.onRendered(() => {
   $('#new-cashflow-modal').on('show.bs.modal', function(e) {
     $('.popover').popover('destroy');
-    
+
     var modal = $(this);
     var link = $(e.relatedTarget);
     var flowType = link.data('cashflowtype');
     //var modalData = Session.get('cashFlowModalData');
-    
+
     /*if (flowType === undefined && modalData !== undefined) {
       var flow = CashFlow.findOne({'_id': modalData.flow});
       flowType = (flow.amount < 0) ? "expense" : "income"
     }*/
 
     Session.set('cashFlowType', flowType);
-
-    var addLabel = modal.find('#add-cashflow-label');
-    addLabel.text('Add an ' + flowType);
-    var nameInput = modal.find('#cashFlowName');
-    nameInput.attr('placeholder', 'Your ' + flowType + '\'s name.');
-    var amountInput = modal.find('#cashFlowAmount');
-    amountInput.attr('placeholder', 'Your ' + flowType + '\'s amount.');
-    var submitButton = modal.find('#cashFlowSubmit');
-    submitButton.val("Add " + flowType);
 
   /*
     if (modalData && modalData.type === 'edit') {
@@ -52,17 +43,20 @@ Template.newCashFlowModal.events({
       amount: Number($(e.target).find('#cashFlowAmount').val()),
       start: date,
       paid: false,
-      occurance: $(e.target).find('.tab-content .active')[0].id
+      occurance: $('#reoccuranceTabs').find('li.active').text()
     }
-    
-    Meteor.call('addFlow', flow, function(error) {
-      if (error)
+
+    console.log('adding flow': flow);
+    Meteor.call('addFlow', flow, function(error, response) {
+      if (error) {
         Bert.alert({
           type: 'danger',
           message: error.message,
           style: 'growl-top-right'
         });
         console.log('addFlow error: ' + error);
+      }
+      $('#new-cashflow-modal').modal('hide');
     });
 
     /*
@@ -79,7 +73,7 @@ Template.newCashFlowModal.events({
       });
     }
     */
-    $('#new-expense-modal').modal('hide');
+
   }
 })
 

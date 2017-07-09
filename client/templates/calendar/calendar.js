@@ -20,14 +20,15 @@ Template.calendar.onRendered(() => {
             'amount': flow.amount,
             'textColor': (flow.amount < 0) ? '#B90000' : '#5CB85C',
             'editable': true,
-            'paid': flow.paid,
-            'generated': flow.generated
+            'paid': flow.paid
           };
       });
 
       callback(data);
     },
     dayClick: function(date, jsEvent, view) {
+      Session.set('activeMoment', date.valueOf());
+
       $(this).popover({
         html: true,
         container: 'body',
@@ -138,5 +139,13 @@ Template.calendar.onRendered(() => {
     viewDestroy: function() {
       $('.popover').popover('destroy');
     }
+  });
+
+  Tracker.autorun((runFunc) => {
+    // When new expenses get added to the DB make sure we refresh the calendar
+    CashFlow.direct.find().fetch();
+    $('#calendar').fullCalendar('refetchEvents');
+
+    Session.get('accountbalance');
   });
 });
