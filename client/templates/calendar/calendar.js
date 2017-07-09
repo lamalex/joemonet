@@ -20,7 +20,8 @@ Template.calendar.onRendered(() => {
             'amount': flow.amount,
             'textColor': (flow.amount < 0) ? '#B90000' : '#5CB85C',
             'editable': true,
-            'paid': flow.paid
+            'paid': flow.paid,
+            'occurance': flow.occurance
           };
       });
 
@@ -91,18 +92,12 @@ Template.calendar.onRendered(() => {
       });
 
       */
-      var trash = $('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
-      trash.click(function() {
-        Meteor.call('removeFlow', flow.id, function(error, res) {
-          if (error) {
-            Bert.alert({
-              type: 'danger',
-              message: error,
-              style: 'growl-top-right'
-            });
-          }
-        });
-      })
+      var trashHtml = `
+      <a href="#delete-cashflow-modal" data-toggle="modal" data-flow-id="${flow.id}" data-flow-title="${flow.title}" data-flow-occurance="${flow.occurance}">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+      </a>
+      `
+      var trash = $(trashHtml);
 
       //markPaid.appendTo(wrapper);
       //edit.appendTo(wrapper);

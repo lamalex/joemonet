@@ -1,0 +1,25 @@
+<template name="deleteCashFlowModal">
+  <div id="delete-cashflow-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delete-cashflow-label">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          {{#if cashFlowReoccurs}}
+            <h4>{{cashFlowTitle}} is part of a reoccuring series. What would you like to do?</h4>
+            <div class="delete-btns">
+              <a href="#" type="button" role="button" class="btn btn-info flow-delete-one" data-dismiss="modal">Delete just this one</a>
+              <a href="#" type="button" role="button" class="btn btn-warning flow-delete-future" data-dismiss="modal">Delete this, and all future</a>
+              <a href="#" type="button" role="button" class="btn btn-danger flow-delete-all" data-dismiss="modal">Delete them all</a>
+            </div>
+          {{else}}
+            <h4>Are you sure you want to delete {{cashFlowTitle}}? This cannot be undone.</h4>
+            <div class="delete-btns">
+              <a href="#" type="button" role="button" class="btn btn-info" data-dismiss="modal" aria-label="Close">Nevermind</a>
+              <a href="#" type="button" role="button" class="btn btn-danger flow-delete-one" data-dismiss="modal">Delete it</a>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
