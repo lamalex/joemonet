@@ -30,31 +30,6 @@ Template.calendar.onRendered(() => {
 
       callback(data);
     },
-    dayClick: function(date, jsEvent, view) {
-      Session.set('activeMoment', date.valueOf());
-
-      $(this).popover({
-        html: true,
-        container: 'body',
-        placement: 'top',
-        trigger: 'click',
-        content: `
-          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-cashflowtype="expense">Add an expense</a> |
-          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-cashflowtype="income">Add income</a>
-        `
-      });
-      $(this).popover('show');
-
-      /*
-       * Hide any other visible popovers once a new one has been shown.
-       */
-      var newest = $(this).data('bs.popover').$tip[0].id;
-      _.each($('.popover'), (popover) => {
-        if (popover.id !== newest) {
-          $('#' + popover.id).popover('destroy');
-        }
-      });
-    },
     eventRender: function(flow, element, view) {
       var scaffolding = `
         <div class="card">
@@ -111,6 +86,31 @@ Template.calendar.onRendered(() => {
 
       content.find('.card').flip({
         'axis': 'x'
+      });
+    },
+    dayClick: function(date, jsEvent, view) {
+      Session.set('activeMoment', date.valueOf());
+
+      $(this).popover({
+        html: true,
+        container: 'body',
+        placement: 'top',
+        trigger: 'click',
+        content: `
+          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-cashflowtype="expense">Add an expense</a> |
+          <a href="#" data-toggle="modal" data-target="#new-cashflow-modal" data-cashflowtype="income">Add income</a>
+        `
+      });
+      $(this).popover('show');
+
+      /*
+       * Hide any other visible popovers once a new one has been shown.
+       */
+      var newest = $(this).data('bs.popover').$tip[0].id;
+      _.each($('.popover'), (popover) => {
+        if (popover.id !== newest) {
+          $('#' + popover.id).popover('destroy');
+        }
       });
     },
     eventClick: function(flow, jsevent, view) {
