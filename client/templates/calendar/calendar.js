@@ -134,6 +134,28 @@ Template.calendar.onRendered(() => {
         active.addClass('flipped');
       }
     },
+    viewRender: function(view, element) {
+      var fcCenter = element.parents().find('.fc-center');
+      if (fcCenter.children().length == 0) {
+        var accountInput = $('<input id="bank-balance-input"></div>');
+        accountInput.val(Meteor.user().profile.balance);
+        accountInput.addClass('form-control');
+        accountInput.attr('type', 'number');
+        accountInput.keyup(function() {
+          Session.set('accountbalance', $(this).val());
+          Meteor.users.update(Meteor.userId(), {$set: {"profile.balance": $(this).val()}});
+        });
+
+        accountInput.popover({
+          'content': 'Today\'s bank balance',
+          'placement': 'right',
+          'trigger': 'focus',
+          'delay': 175
+        });
+
+        fcCenter.append(accountInput);
+      }
+    },
     viewDestroy: function() {
       $('.popover').popover('destroy');
     }
