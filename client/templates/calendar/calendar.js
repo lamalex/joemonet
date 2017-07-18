@@ -5,11 +5,6 @@ Template.calendar.onRendered(() => {
       right: 'today basicWeek,month prev,next'
     },
     events: function(start, end, timezone, callback) {
-      var bankaccount = Session.get('accountbalance') === undefined
-        ? Meteor.user().profile.balance
-        : Session.get('accountbalance');
-      bankaccount = Number(bankaccount);
-
       let data = CashFlow.find({
         start: { $lte: end.endOf('day').valueOf() }
       }, {sort: {'start': 1} }).fetch().filter((flow) => {
@@ -28,7 +23,14 @@ Template.calendar.onRendered(() => {
         };
       });
 
-      callback(data);
+      var balances = _.map(AccountBalance.find().fetch(), (bal) => {
+        bal.type = 'balance',
+        bal.textColor = '#999999',
+        bal.editable = false;
+        return bal;
+      });
+
+      callback(data.concat(balances));
     },
     eventRender: function(flow, element, view) {
       var scaffolding = `
@@ -85,7 +87,8 @@ Template.calendar.onRendered(() => {
       wrapper.find('.front').append(amount);
 
       content.find('.card').flip({
-        'axis': 'x'
+        'axis': 'x',
+        'trigger': 'manual'
       });
     },
     dayClick: function(date, jsEvent, view) {
