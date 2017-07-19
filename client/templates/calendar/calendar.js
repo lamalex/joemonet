@@ -1,3 +1,8 @@
+accounting.settings.currency.format = {
+	pos : "%s %v", // for positive values, eg. "$ 1.00" (required)
+	neg : "%s %v"  // for negative values, eg. "$ 1.00"
+};
+
 Template.calendar.onRendered(() => {
   $('#calendar').fullCalendar({
     eventColor: "transparent",
@@ -91,6 +96,14 @@ Template.calendar.onRendered(() => {
         'trigger': 'manual'
       });
     },
+    eventOrder: [function(a,b) {
+      if (a.type === "balance") {
+        return -1
+      } else if (b.type === "balance") {
+        return 1
+      }
+      else return a.type - b.type;
+    }, "-amount"],
     dayClick: function(date, jsEvent, view) {
       Session.set('activeMoment', date.valueOf());
 
@@ -168,7 +181,6 @@ Template.calendar.onRendered(() => {
     // When new expenses get added to the DB make sure we refresh the calendar
     CashFlow.direct.find().fetch();
     $('#calendar').fullCalendar('refetchEvents');
-
     Session.get('accountbalance');
   });
 });
