@@ -17,6 +17,7 @@ Template.calendar.onRendered(() => {
       }).map((flow) => {
         return {
           'id': flow._id,
+					'type': flow.type,
           'start': flow.start,
           'title': flow.title,
           'amount': flow.amount,
@@ -97,12 +98,13 @@ Template.calendar.onRendered(() => {
       });
     },
     eventOrder: [function(a,b) {
-      if (a.type === "balance") {
+      if (a.miscProps.type === "balance") {
         return -1
-      } else if (b.type === "balance") {
+      } else if (b.miscProps.type === "balance") {
         return 1
-      }
-      else return a.type - b.type;
+      } else {
+				return b.miscProps.amount - a.miscProps.amount;
+			}
     }, "-amount"],
     dayClick: function(date, jsEvent, view) {
       Session.set('activeMoment', date.valueOf());
