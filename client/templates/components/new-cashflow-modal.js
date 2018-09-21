@@ -26,7 +26,8 @@ Template.newCashFlowModal.onRendered(() => {
     $('#cashFlowName').val("");
     $('#cashFlowAmount').val("");
     Session.set('cashFlowModalData', undefined);
-    $('#reoccuranceTabs a[href=#monthly]').tab('show');
+    $('#reoccuranceTabs > div > ul > li.active > a').tab('show');
+
   });
 });
 
