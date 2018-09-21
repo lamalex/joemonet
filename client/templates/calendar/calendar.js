@@ -28,6 +28,21 @@ Template.calendar.onRendered(() => {
           'origin': flow.origin
         };
       });
+			const displayMonth = moment(new Date($('.fc-left').text()));
+			const computeTotalForType = (type, data) => {
+				return _.reduce(_.filter(data, (f) => {
+					const fmom = moment(f.start);
+					return f.type == type && fmom.isBetween(displayMonth.clone().startOf('month'), displayMonth.clone().endOf('month'), null, '[]');
+				}), (i, n) => { return i + n.amount }, 0);
+			}
+			const totalIncome = computeTotalForType('income', data);
+			const totalExpenses = computeTotalForType('expense', data);
+			Session.set('flowTotals', {
+				"month": {
+					"income": totalIncome,
+					"expense": totalExpenses
+				}
+			});
 
       var balances = _.map(AccountBalance.find().fetch(), (bal) => {
         bal.type = 'balance',
@@ -39,7 +54,7 @@ Template.calendar.onRendered(() => {
       callback(data.concat(balances));
     },
     eventRender: function(flow, element, view) {
-      var scaffolding = `
+			var scaffolding = `
         <div class="card">
           <div class="front"></div>
           <div class="back">
